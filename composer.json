@@ -1,0 +1,17 @@
+{
+    "name": "aaemnnosttv/dev-debug",
+    "type": "wordpress-muplugin",
+    "description": "Development debugging functions for WordPress",
+    "keywords": ["debug", "wordpress"],
+    "authors": [
+    	{
+    		"name": "Evan Mattson",
+    		"email": "me@aaemnnost.tv",
+    		"homepage": "http://aaemnnost.tv",
+    		"role": "Developer"
+    	}
+    ],
+    "require": {
+	    "composer/installers": "~1.0.6"
+	}
+}
