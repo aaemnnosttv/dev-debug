@@ -670,8 +670,11 @@ HTML;
 	 *
 	 * @return [type] [description]
 	 */
-	public static function log( $msg, $level = DevDebug::$log_level )
+	public static function log( $msg, $level = null )
 	{
+		if ( is_null( $level ) )
+			$level = DevDebug::$log_level;
+
 		$realm = is_admin() ? 'admin' : 'front';
 		
 		if ( is_scalar( $msg ) )
