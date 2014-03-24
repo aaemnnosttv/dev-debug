@@ -63,6 +63,7 @@ function ddprint( $data, $title = null, $echo = false )
 
 function ddlog( $msg )
 {
-	DevDebug::log( $msg );
+	DevDebug::log( $msg, DevDebug_Logger::INFO );
+
 	return $msg;
 }

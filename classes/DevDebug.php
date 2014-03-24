@@ -704,7 +704,10 @@ HTML;
 		if ( is_scalar( $msg ) )
 			self::$logger->Log( "($realm) - $msg", $level );
 		else
+		{
+			$msg = "\n" . print_r( $msg, true );
 			self::$logger->Log( $msg, $level );
+		}
 	}
 
 }
