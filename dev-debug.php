@@ -24,9 +24,16 @@ DevDebug::get_instance();
  * @param  integer $sec    [description]
  * @return [type]          [description]
  */
-function sdt( $debug, $title = '', $sec = 120 )
+function sdt( $data, $title = null, $sec = 120 )
 {
-	return DevDebug::set_debug_transient( $debug, $title, $sec );
+	$args = array(
+		'persistent' => true,
+		'backtrace'  => debug_backtrace(false),
+		'timeout'    => $sec,
+		'title'      => $title,
+	);
+
+	return DevDebug::get_instance()->analyze( $data, $args );
 }
 /**
  * Clear Debug Transient

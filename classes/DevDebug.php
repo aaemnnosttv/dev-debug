@@ -10,6 +10,8 @@ class DevDebug
 
 	const slug = 'dev-debug';
 
+	public static $persistent_timeout = 120;
+
 	/**
 	 * [$instance description]
 	 * @var [type]
@@ -154,11 +156,21 @@ class DevDebug
 		self::log( $data, DevDebug_Logger::DEBUG );
 
 		$d = array(
-			'echo'      => false,
-			'backtrace' => array(),
+			'echo'       => false,
+			'backtrace'  => array(),
+			'persistent' => false,
+			'timeout'    => self::$persistent_timeout,
 		);
 		$args = wp_parse_args( $args, $d );
 		$args['title'] = isset( $args['title'] ) ? $args['title'] : gettype( $data );
+
+
+		if ( $args['persistent'] )
+		{
+			//self::log( $args );
+			self::set_debug_transient( $data, $args );
+		}
+
 		extract( $args );
 
 		$args['data'] = $data;
@@ -371,6 +383,9 @@ HTML;
 	 */
 	function get_backtrace_list( $trace )
 	{
+		if ( !is_array( $trace ) && is_scalar( $trace ) )
+			return "<div class='trace-error'>$trace</div>";
+
 		$ftrace = $this->prepare_backtrace( $trace );
 
 		$d = array(
@@ -505,22 +520,31 @@ HTML;
 	 * @param [type]  $value  	debug data
 	 * @param integer $sec    	transient timeout
 	 */
-	public static function set_debug_transient( $data, $title = '', $sec = 120 )
+	static function set_debug_transient( $data, $args = array() )
 	{
-		$debug = array(
-			'debug'     => $data,
+		extract( $args );
+
+		try {
+			maybe_serialize( $backtrace ); // this blows up when trying to serialize a Closure
+		} catch ( Exception $e ) {
+		    self::log( 'Caught exception: ',  $e->getMessage() );
+		    $backtrace = $e->getMessage();
+		}
+
+		$capture = array(
+			'data'      => $data,
 			'title'     => $title,
-			//'backtrace' => debug_backtrace(false), // this blows up when trying to serialize a Closure
+			'backtrace' => $backtrace, 
 			'time'      => current_time('timestamp')
 		);
 
-		set_transient( 'dev_debug', $debug, $sec );
+		set_transient( 'dev_debug', $capture, $timeout );
 	}
 
 	public static function clear_debug_transient()
 	{
 		if ( self::is_debug_set() )
-			delete_transient('dev_debug');
+			delete_transient( 'dev_debug' );
 	}
 
 
@@ -549,7 +573,7 @@ HTML;
 			{
 				extract( get_transient('dev_debug') );
 
-				$output = $this->analyze( $debug, array( 'echo' => 0 ) ); // return
+				$output = $this->analyze( $data, array( 'echo' => 0, 'backtrace' => $backtrace ) ); // return
 
 				$meta = date( '@ g:i:s a', $time );
 
