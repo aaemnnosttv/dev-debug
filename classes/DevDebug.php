@@ -89,9 +89,9 @@ class DevDebug
 
 		/**
 		 * Set the directory for to write debug log file to
-		 * filter 'devdebug/logging/path'
+		 * filter 'ddbug/logging/path'
 		 */
-		$log_dir = apply_filters( 'devdebug/logging/path', WP_CONTENT_DIR );
+		$log_dir = apply_filters( 'ddbug/logging/path', WP_CONTENT_DIR );
 		self::$logger = new DevDebug_Logger( path_join( $log_dir, '.htdev-debug.log' ), self::$log_level );
 
 		// init
@@ -273,7 +273,7 @@ class DevDebug
 			self::log('output suppressed: media upload', DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
-		elseif ( apply_filters( 'devdebug/output/footer/suppress', false ) )
+		elseif ( apply_filters( 'ddbug/output/footer/suppress', false ) )
 		{
 			self::log('output suppressed: filter', DevDebug_Logger::DEBUG);
 			$suppress = true;
@@ -608,10 +608,10 @@ HTML;
 		);
 
 		/**
-		 * filter 'devdebug/admin_bar/constants'
+		 * filter 'ddbug/admin_bar/constants'
 		 * @var array 	[CONSTANT => (bool) active]
 		 */
-		$constants = apply_filters( 'devdebug/admin_bar/constants', $constants );
+		$constants = apply_filters( 'ddbug/admin_bar/constants', $constants );
 
 		foreach ( $constants as $c => $active )
 		{
