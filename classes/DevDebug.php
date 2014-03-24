@@ -617,7 +617,7 @@ HTML;
 
 		$wpab->add_group( array(
 			'parent' => self::slug,
-			'id'     => "{self::slug}_constants",
+			'id'     => self::slug . '_constants',
 			'meta'   => array(
 				'class' => 'ab-sub-secondary',
 			),
@@ -650,7 +650,7 @@ HTML;
 				$classes[] = $value ? 'enabled' : 'disabled';
 
 			$wpab->add_menu( array(
-				'parent' => "{self::slug}_constants",
+				'parent' => self::slug . '_constants',
 				'id'     => strtolower( $c ),
 				'title'  => "<span>$c</span>",
 				'meta'   => array(
