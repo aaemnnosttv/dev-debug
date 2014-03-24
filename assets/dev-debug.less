@@ -21,12 +21,13 @@
 @pink:                  #c3325f;
 @purple:                #7a43b6;
 
-@on: @green;
-@off: @grayLighter;
-@undefined: white;
-@ddbase: #EAEAEA; // wordpress <code>
+@on:					@green;
+@off:					@grayLighter;
+@undefined:				fade( white, 60 );
+@ddbase:				#EAEAEA; // wordpress <code>
 
-@maxWidth: 1400px;
+@maxWidth:				1400px;
+@monospace:				Consolas, Monaco, monospace;
 
 .clearfix() {
   &:before,
@@ -45,6 +46,7 @@
 {
 	.undefined > .ab-item > span {
 		color: @undefined;
+		font-style: italic;
 	}
 	.enabled > .ab-item > span {
 		color: @on;
@@ -55,7 +57,7 @@
 }
 
 .dev_debug .disabled {
-	color: @off;
+	color: #c7c7c7;
 }
 
 #dev_debug_captures,
@@ -66,7 +68,7 @@
 		background-color: @ddbase;
 		color: #444;
 
-		font-family: consolas, monospace;
+		font-family: @monospace;
 		font-size: 12px;
 		text-align: left;
 
@@ -125,6 +127,9 @@
 					padding: 5px 17px;
 					&.even { background: fade(black, 2); }
 				}
+				.trace-error {
+					padding: 1em;
+				}
 			}
 			.called {
 				font-weight: bold;
@@ -175,6 +180,8 @@
 						background: none;
 						text-decoration: none;
 						color: gray;
+						font-size: 13px;
+						line-height: 28px;
 						padding: 2px 11px;
 						display: block;
 					}
@@ -196,6 +203,9 @@
 			.dump-panel {
 				background: @smoke;
 				padding: 10px;
+				font-family: @monospace;
+				font-size: 13px;
+				line-height: 1.5em;
 				white-space: pre-wrap;
 				display:none;
 				&.active {
@@ -225,6 +235,6 @@
 		margin: 1em 0;
 
 		// currently not supported yet
-		.toggle-meta { display:none; }
+		//.toggle-meta { display:none; }
 	}
 }
