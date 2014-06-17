@@ -57,10 +57,10 @@ class DevDebug
 		)
 	);
 
-	
+
 	/**
 	 * Sets the minimun level to log
-	 * 
+	 *
 	 * const DEBUG	= 1;	// Most Verbose
 	 * const INFO	= 2;	// ...
 	 * const WARN	= 3;	// ...
@@ -121,7 +121,7 @@ class DevDebug
 	 * Check if wp admin bar node should be created or not
 	 *
 	 * define('DEVDEBUG_NO_ADMIN_BAR', 1); // to hide
-	 * 
+	 *
 	 * @return [boolean]
 	 */
 	public function show_in_admin_bar()
@@ -153,7 +153,7 @@ class DevDebug
 	public function analyze( $data, $args = array() )
 	{
 		// maybe record this
-		self::log( $data, DevDebug_Logger::DEBUG );
+		self::log( $data, __METHOD__, DevDebug_Logger::DEBUG );
 
 		$d = array(
 			'echo'       => false,
@@ -262,7 +262,7 @@ class DevDebug
 
 	/**
 	 * Determine if anything should be output at shutdown
-	 * 
+	 *
 	 * @todo	add logic for detecting non-standard page loads
 	 * 			ie: generated styles/js, robots.txt, etc.
 	 */
@@ -272,22 +272,22 @@ class DevDebug
 
 		if ( empty( $this->captured ) )
 		{
-			self::log('nothing captured', DevDebug_Logger::DEBUG);
+			self::log('nothing captured', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( $this->doing_ajax )
 		{
-			self::log('output suppressed: doing ajax', DevDebug_Logger::DEBUG);
+			self::log('output suppressed: doing ajax', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( !empty( $this->screen->id ) && ('async-upload' == $this->screen->id) )
 		{
-			self::log('output suppressed: media upload', DevDebug_Logger::DEBUG);
+			self::log('output suppressed: media upload', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( apply_filters( 'ddbug/output/footer/suppress', false ) )
 		{
-			self::log('output suppressed: filter', DevDebug_Logger::DEBUG);
+			self::log('output suppressed: filter', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 
@@ -504,7 +504,7 @@ HTML;
 
 			else {
 				$n = $a;
-				self::log( gettype( $a ), __METHOD__.' - Missing type handling!' );
+				self::log( 'Missing type _'. gettype( $a ) . '_ handling!', __METHOD__ );
 			}
 
 			$new[ $i ] = "<span class=\"arg\">$n</span>";
@@ -527,14 +527,14 @@ HTML;
 		try {
 			maybe_serialize( $backtrace ); // this blows up when trying to serialize a Closure
 		} catch ( Exception $e ) {
-		    self::log( 'Caught exception: ',  $e->getMessage() );
+		    self::log( 'Caught exception: ' . $e->getMessage(), __METHOD__, DevDebug_Logger::DEBUG );
 		    $backtrace = $e->getMessage();
 		}
 
 		$capture = array(
 			'data'      => $data,
 			'title'     => $title,
-			'backtrace' => $backtrace, 
+			'backtrace' => $backtrace,
 			'time'      => current_time('timestamp')
 		);
 
@@ -625,7 +625,7 @@ HTML;
 
 		$constants = array(
 			'WP_DEBUG'               => true, // WP Debug / PHP error reporting
-			'WP_DEBUG_LOG'           => true, // PHP error logging 
+			'WP_DEBUG_LOG'           => true, // PHP error logging
 			'WP_HTTP_BLOCK_EXTERNAL' => true, // disable WP HTTP class functions (wp_remote_get/post()...)
 			'SCRIPT_DEBUG'           => true, // uncompressed, non-concatenated scripts & styles (WP)
 			'RELOCATE'               => true, // for site migrations
@@ -694,20 +694,27 @@ HTML;
 	 *
 	 * @return [type] [description]
 	 */
-	public static function log( $msg, $level = null )
+	public static function log( $msg, $title = null, $level = null )
 	{
 		if ( is_null( $level ) )
 			$level = DevDebug::$log_level;
 
 		$realm = is_admin() ? 'admin' : 'front';
-		
+		$realm = (defined('DOING_AJAX') && DOING_AJAX) ? 'ajax' : $realm;
+
+		$log = "($realm)";
+		$log .= is_scalar( $title ) ? "[$title]" : '';
+
 		if ( is_scalar( $msg ) )
-			self::$logger->Log( "($realm) - $msg", $level );
+			$log .= " $msg";
 		else
 		{
-			$msg = "\n" . print_r( $msg, true );
-			self::$logger->Log( $msg, $level );
+			$dump = print_r( $msg, true );
+			$log .= "\n$dump";
+			$log .= str_repeat('-----', 10);
 		}
+
+		self::$logger->Log( $log, $level );
 	}
 
 }

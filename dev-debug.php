@@ -61,9 +61,9 @@ function ddprint( $data, $title = null, $echo = false )
 	return DevDebug::get_instance()->analyze( $data, $args );
 }
 
-function ddlog( $msg )
+function ddlog( $msg, $title = null )
 {
-	DevDebug::log( $msg, DevDebug_Logger::INFO );
+	DevDebug::log( $msg, $title, DevDebug_Logger::INFO );
 
 	return $msg;
 }
