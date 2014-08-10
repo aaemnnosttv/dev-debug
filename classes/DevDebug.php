@@ -162,7 +162,18 @@ class DevDebug
 			'timeout'    => self::$persistent_timeout,
 		);
 		$args = wp_parse_args( $args, $d );
-		$args['title'] = isset( $args['title'] ) ? $args['title'] : gettype( $data );
+
+		$datatype = gettype( $data );
+		if ( !isset( $args['title'] ) )
+		{
+			if ( is_object( $data ) )
+			{
+				$class = get_class( $data );
+				$args['title'] = "$datatype ( $class )";
+			}
+			else
+				$args['title'] = $datatype;
+		}
 
 
 		if ( $args['persistent'] )
