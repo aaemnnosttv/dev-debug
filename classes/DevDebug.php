@@ -97,24 +97,24 @@ class DevDebug
 		self::$logger = new DevDebug_Logger( path_join( $log_dir, '.htdev-debug.log' ), self::$log_level );
 
 		// init
-		add_action( 'init',	array(&$this, 'init') );
+		add_action( 'init',	array($this, 'init') );
 		// output!
-		add_action( 'shutdown', array(&$this, 'output_captured') );
+		add_action( 'shutdown', array($this, 'output_captured') );
 	}
 
 	function init()
 	{
 		if ( $this->show_in_admin_bar() && is_admin_bar_showing() )
-			add_action( 'admin_bar_menu',	array(&$this, 'dev_admin_menu') );
+			add_action( 'admin_bar_menu',	array($this, 'dev_admin_menu') );
 
-		add_action( 'admin_notices',	array(&$this, 'print_persistent_capture' ) );
-		add_action( 'current_screen',	array(&$this, 'get_screen') );
+		add_action( 'admin_notices',	array($this, 'print_persistent_capture' ) );
+		add_action( 'current_screen',	array($this, 'get_screen') );
 
 		foreach ( $this->hooks['styles'] as $hook )
-			add_action( $hook,	array(&$this, 'print_styles') );
+			add_action( $hook,	array($this, 'print_styles') );
 
 		foreach ( $this->hooks['scripts'] as $hook )
-			add_action( $hook,	array(&$this, 'print_scripts') );
+			add_action( $hook,	array($this, 'print_scripts') );
 	}
 
 	/**
