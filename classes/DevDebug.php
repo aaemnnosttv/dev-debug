@@ -10,6 +10,8 @@ class DevDebug
 
 	const slug = 'dev-debug';
 
+	const transient = 'dev_debug';
+
 	public static $persistent_timeout = 120;
 
 	/**
@@ -107,7 +109,17 @@ class DevDebug
 		if ( $this->show_in_admin_bar() && is_admin_bar_showing() )
 			add_action( 'admin_bar_menu',	array($this, 'dev_admin_menu') );
 
-		add_action( 'admin_notices',	array($this, 'print_persistent_capture' ) );
+		if ( self::is_debug_set() )
+		{
+			// clear transient with url
+			if ( isset( $_GET['cdt'] ) && $_GET['cdt'] )
+				self::clear_debug_transient();
+
+			$trans = self::get_debug_transient();
+			$this->analyze( $trans['data'], $trans );
+		}
+
+		//add_action( 'admin_notices',	array($this, 'print_persistent_capture' ) );
 		add_action( 'current_screen',	array($this, 'get_screen') );
 
 		foreach ( $this->hooks['styles'] as $hook )
@@ -531,7 +543,7 @@ HTML;
 	 * @param [type]  $value  	debug data
 	 * @param integer $sec    	transient timeout
 	 */
-	static function set_debug_transient( $data, $args = array() )
+	public static function set_debug_transient( $data, $args = array() )
 	{
 		extract( $args );
 
@@ -549,13 +561,18 @@ HTML;
 			'time'      => current_time('timestamp')
 		);
 
-		set_transient( 'dev_debug', $capture, $timeout );
+		set_transient( self::transient, $capture, $timeout );
+	}
+
+	public static function get_debug_transient()
+	{
+		return get_transient( self::transient );
 	}
 
 	public static function clear_debug_transient()
 	{
 		if ( self::is_debug_set() )
-			delete_transient( 'dev_debug' );
+			delete_transient( self::transient );
 	}
 
 
@@ -566,10 +583,6 @@ HTML;
 	{
 		/*if ( !is_user_logged_in() || !current_user_can('administrator') )
 			return;*/
-
-		// clear transient with url
-		if ( isset( $_GET['cdt'] ) && $_GET['cdt'] )
-			self::clear_debug_transient();
 
 		$set = self::is_debug_set();
 		$sep = '<span class="sep">|</span>';
