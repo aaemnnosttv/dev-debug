@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Plugin Name: DEV Debug
+	Plugin Name: Dev Debug
 	Description: Development Debug Functions
 	Author: Evan Mattson (@aaemnnosttv)
 	Version: 1.0
@@ -9,7 +9,6 @@
 
 require_once 'classes/DevDebug_Logger.php';
 require_once 'classes/DevDebug.php';
-
 
 #########################
 DevDebug::get_instance();
