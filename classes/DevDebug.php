@@ -137,9 +137,17 @@ class DevDebug
 
 	public function init_debug_bar_panels( $panels )
 	{
-		require_once 'DevDebug_DebugBar_Captures.php';
+		$add_panels = array(
+			'DevDebug_DebugBar_Captures',
+			'DevDebug_DebugBar_Log'
+		);
 
-		array_unshift( $panels, new DevDebug_DebugBar_Captures() );
+		foreach ( array_reverse($add_panels) as $panel_class )
+		{
+			require_once "$panel_class.php";
+			array_unshift( $panels, new $panel_class() );
+		}
+
 		return $panels;
 	}
 
