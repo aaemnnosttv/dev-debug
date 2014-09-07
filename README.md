@@ -39,22 +39,26 @@ Each dump also has a full comprehensive sexy lookin backtrace with which you can
 
 ### Persistent Capture
 
-Dev Debug also provides a function for capturing data in circumstances where `ddprint()` would not work, such during as an ajax request.  The output is then only rendered in the header of wp-admin.
+Dev Debug also provides two functions for capturing data in circumstances where `ddprint()` would not work, such during as an ajax request.
 
+#### sdt()
 ```php
 
-sdt( $data, $label = 'optional' ) // Set Debug Transient
+sdt( $data, $label = 'optional' );
 ```
+This function saves the captured data as a transient. It's captured output will appear with other captures as long as the data is still set.
 
-*No persistent capture set yet*
+The `sdt()` capture has a short lifespan of only 2 minutes.
 
-<img src="http://cl.ly/image/1l3I1o0l2i1Y/Image%202014-03-24%20at%2012.39.53%20PM.png" alt="">
+#### ddlog()
+```php
 
-*Set!*
+ddlog( $data, $label = 'optional' );
+```
+This function writes the data to a log file.
+By default, the file is located in the `wp-content/.htdev-debug.log`.  The destination directory can be changed with the `ddbug/logging/path` filter if desired.
 
-<img src="http://cl.ly/image/1F2a1r1n3O3y/Image%202014-03-24%20at%201.37.14%20PM.png" alt="">
-
-The persistent capture has a short lifespan of only 2 minutes
+>>> Most standard Apache and Nginx configurations include rules to block external access to files that begin with `.ht` such as ``.htaccess` and `.htpasswd`.  The `.htdev-debug` file could possibly contain very sensitive information so it is not recommended to be used on production environments.  
 
 ## Menu Item
 
