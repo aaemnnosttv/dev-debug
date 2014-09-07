@@ -107,7 +107,9 @@ class DevDebug
 	function init()
 	{
 		if ( $this->show_in_admin_bar() && is_admin_bar_showing() )
-			add_action( 'admin_bar_menu',	array($this, 'dev_admin_menu') );
+			add_action( 'admin_bar_menu'	, array($this, 'dev_admin_menu') );
+			
+		add_filter( 'debug_bar_panels'	, array($this, 'init_debug_bar_panels') );
 
 		if ( self::is_debug_set() )
 		{
@@ -127,6 +129,14 @@ class DevDebug
 
 		foreach ( $this->hooks['scripts'] as $hook )
 			add_action( $hook,	array($this, 'print_scripts') );
+	}
+
+	public function init_debug_bar_panels( $panels )
+	{
+		require_once 'DevDebug_DebugBar_Captures.php';
+
+		array_unshift( $panels, new DevDebug_DebugBar_Captures() );
+		return $panels;
 	}
 
 	/**
