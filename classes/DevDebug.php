@@ -87,8 +87,8 @@ class DevDebug
 	{
 		// load internal logging
 		//require_once "DevDebug_Logger.php";
-
 		$this->dir = dirname( dirname( __FILE__ ) );
+		$this->uri = plugins_url( '', "$this->dir/dev-debug.php" );
 		$this->doing_ajax = (bool) self::const_value('DOING_AJAX');
 
 		/**
@@ -125,11 +125,14 @@ class DevDebug
 		//add_action( 'admin_notices',	array($this, 'print_persistent_capture' ) );
 		add_action( 'current_screen',	array($this, 'get_screen') );
 
+		wp_enqueue_style( 'dev-debug', "{$this->uri}/assets/dev-debug.min.css" );
+		wp_enqueue_script( 'dev-debug', "{$this->uri}/assets/dev-debug.min.js", array('jquery'), false, true );
+
 		foreach ( $this->hooks['styles'] as $hook )
-			add_action( $hook,	array($this, 'print_styles') );
+			add_action( $hook,	array($this, 'print_styles'), 999 );
 
 		foreach ( $this->hooks['scripts'] as $hook )
-			add_action( $hook,	array($this, 'print_scripts') );
+			add_action( $hook,	array($this, 'print_scripts'), 999 );
 	}
 
 	public function init_debug_bar_panels( $panels )
@@ -159,17 +162,23 @@ class DevDebug
 
 	function print_styles()
 	{
-		$css = file_get_contents( "{$this->dir}/assets/dev-debug.css" );
-		echo "<!-- DevDebug Styles -->\n
-		<style type='text/css'>$css</style>\n";
+		if ( ! wp_style_is( 'dev-debug', 'done' ) )
+		{
+			$css = file_get_contents( "{$this->dir}/assets/dev-debug.min.css" );
+			echo "<!-- DevDebug Styles -->\n
+			<style type='text/css'>$css</style>\n";
+		}
 		$this->did_styles = true;
 	}
 
 	function print_scripts()
 	{
-		$scripts = file_get_contents( "{$this->dir}/assets/dev-debug.min.js" );
-		echo "<!-- DevDebug Scripts -->\n
-		<script type='text/javascript'>$scripts</script>\n";
+		if ( ! wp_script_is( 'dev-debug', 'done' ) )
+		{
+			$scripts = file_get_contents( "{$this->dir}/assets/dev-debug.min.js" );
+			echo "<!-- DevDebug Scripts -->\n
+			<script type='text/javascript'>$scripts</script>\n";
+		}
 		$this->did_scripts = true;
 	}
 
