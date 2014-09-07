@@ -42,6 +42,13 @@
 
 @import "icons.less";
 
+#debug-menu-link-DevDebug_DebugBar_Captures .count
+{
+	padding: 0 10px;
+	background: @gray;
+	float: right;
+}
+
 #wp-admin-bar-dev-debug
 {
 	.undefined > .ab-item > span {
@@ -104,8 +111,8 @@
 		.toggles {
 			float: right;
 			a {
-				text-decoration: none;
-				color: @smoke;
+				text-decoration: none !important;
+				color: @smoke !important;
 				&:hover { color: #f0f0f0; }
 			}
 		}
@@ -178,8 +185,8 @@
 					border-bottom: 1px solid @grayLighter - 5;
 					a {
 						background: none;
-						text-decoration: none;
-						color: gray;
+						text-decoration: none !important;
+						color: gray !important;
 						font-size: 13px;
 						line-height: 28px;
 						padding: 2px 11px;
@@ -190,7 +197,7 @@
 					&.active {
 						background: white;
 						border-left: 3px solid @orange;
-						a { color: @red; }
+						a { color: @red !important; }
 					}
 				}
 			}
