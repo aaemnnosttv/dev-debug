@@ -96,7 +96,8 @@ class DevDebug
 		 * filter 'ddbug/logging/path'
 		 */
 		$log_dir = apply_filters( 'ddbug/logging/path', WP_CONTENT_DIR );
-		self::$logger = new DevDebug_Logger( path_join( $log_dir, '.htdev-debug.log' ), self::$log_level );
+		$this->log_filepath = path_join( $log_dir, '.htdev-debug.log' );
+		self::$logger = new DevDebug_Logger( $this->log_filepath, self::$log_level );
 
 		// init
 		add_action( 'init',	array($this, 'init') );
