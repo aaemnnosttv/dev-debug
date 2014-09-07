@@ -58,7 +58,7 @@ ddlog( $data, $label = 'optional' );
 This function writes the data to a log file.
 By default, the file is located in the `wp-content/.htdev-debug.log`.  The destination directory can be changed with the `ddbug/logging/path` filter if desired.
 
-> Most standard Apache and Nginx configurations include rules to block external access to files that begin with `.ht` such as ``.htaccess` and `.htpasswd`.  The `.htdev-debug` file could possibly contain very sensitive information so it is not recommended to be used on production environments.  
+> Most standard Apache and Nginx configurations include rules to block external access to files that begin with `.ht` such as `.htaccess` and `.htpasswd`.  The `.htdev-debug` file could possibly contain very sensitive information so it is not recommended to be used on production environments.  
 
 ## Menu Item
 
