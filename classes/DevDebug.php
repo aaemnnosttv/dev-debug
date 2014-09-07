@@ -248,6 +248,21 @@ class DevDebug
     	throw new ErrorException( $errstr, $errno, 0, $errfile, $errline );
 	}*/
 
+	public function capture_count()
+	{
+		return count( $this->captured );
+	}
+
+	public function has_captures()
+	{
+		return (bool) $this->capture_count();
+	}
+
+	public function get_captures()
+	{
+		return $this->captured;
+	}
+
 	/**
 	 * Shutdown callback
 	 */
