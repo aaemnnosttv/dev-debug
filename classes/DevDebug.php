@@ -753,6 +753,13 @@ HTML;
 		return esc_attr( strip_tags( $data ) );
 	}
 
+	public static function get_realm()
+	{
+		if ( self::const_value('DOING_AJAX') )
+			return 'ajax';
+
+		return is_admin() ? 'admin' : 'front';
+	}
 
 	/**
 	 * Low-level debugging
@@ -766,10 +773,7 @@ HTML;
 		if ( is_null( $level ) )
 			$level = DevDebug::$log_level;
 
-		$realm = is_admin() ? 'admin' : 'front';
-		$realm = (defined('DOING_AJAX') && DOING_AJAX) ? 'ajax' : $realm;
-
-		$log = "($realm)";
+		$log = sprintf( '(%s)', self::get_realm() );
 		$log .= is_scalar( $title ) ? "[$title]" : '';
 
 		if ( is_scalar( $msg ) )
