@@ -14,21 +14,21 @@ var gulp = require('gulp'),
 
 var paths = {
   scripts: [
-    'assets/dev-debug.js'
+    'assets/src/dev-debug.js'
   ],
   jshint: [
     'gulpfile.js',
     'assets/*.js',
-    '!assets/dev-debug.js',
-    '!assets/dev-debug.min.js',
+    '!assets/src/dev-debug.js',
+    '!assets/dist/dev-debug.min.js',
     '!assets/**/*.min-*'
   ],
-  less: 'assets/dev-debug.less'
+  less: 'assets/src/dev-debug.less'
 };
 
 var destination = {
-  css: 'assets',
-  scripts: 'assets'
+  css: 'assets/dist',
+  scripts: 'assets/dist'
 };
 
 gulp.task('less', function() {
@@ -40,7 +40,7 @@ gulp.task('less', function() {
       .pipe(autoprefix('last 2 versions', 'ie 8', 'ie 9', 'android 2.3', 'android 4', 'opera 12'))
       .pipe(rename('./dev-debug.css'))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest(destination.css))
+    // .pipe(gulp.dest(destination.css))
     .pipe(minifyCSS())
     .pipe(rename('./dev-debug.min.css'))
     .pipe(gulp.dest(destination.css))
@@ -56,7 +56,7 @@ gulp.task('jshint', function() {
 gulp.task('js', ['jshint'], function() {
   return gulp.src(paths.scripts)
     .pipe(concat('./dev-debug.js'))
-    .pipe(gulp.dest(destination.scripts))
+    // .pipe(gulp.dest(destination.scripts))
     .pipe(uglify())
     .pipe(rename('./dev-debug.min.js'))
     .pipe(gulp.dest(destination.scripts))
