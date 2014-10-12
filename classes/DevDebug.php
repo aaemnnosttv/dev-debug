@@ -508,14 +508,12 @@ HTML;
 			// function
 			if ( isset( $data['class'] ) )
 			{
-				$f[ $i ]['func'] = "
-					<span class='class'>{$data['class']}</span>
-					<span class='call-type'>{$data['type']}</span>
-					<span class='method'>{$data['function']}</span>
-					";
+				$f[ $i ]['func']  = "<span class='class'>{$data['class']}</span>";
+				$f[ $i ]['func'] .= "<span class='call-type'>{$data['type']}</span>";
+				$f[ $i ]['func'] .= "<span class='method'>{$data['function']}</span>";
 			}
 			else
-				$f[ $i ]['func'] = "<span class='function'>{$data['function']}</span>";
+				$f[ $i ]['func']  = "<span class='function'>{$data['function']}</span>";
 		}
 
 		return $f;
