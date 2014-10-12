@@ -70,7 +70,11 @@
 #dev_debug_captures,
 #dev_debug_persistent
 {
-	* { box-sizing: border-box; }
+	* {
+		@import "normalize";
+		box-sizing: border-box;
+		border-radius: 0;
+	}
 
 	.ddprint
 	{
