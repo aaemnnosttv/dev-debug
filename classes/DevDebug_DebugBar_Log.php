@@ -19,7 +19,7 @@ class DevDebug_DebugBar_Log extends Debug_Bar_Panel
 		<div>
 			Modified: <code><?php echo date(DATE_RSS, $modified); ?></code>
 		</div>
-		<pre><?php echo $logtext ?></pre>
+		<pre id="dev_debug_log"><?php echo $logtext ?></pre>
 		<?php 
 	}
 }

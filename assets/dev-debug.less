@@ -27,7 +27,7 @@
 @ddbase:				#EAEAEA; // wordpress <code>
 
 @maxWidth:				1400px;
-@monospace:				Consolas, Monaco, monospace;
+@monospace:				Monaco, Consolas, monospace;
 
 .clearfix() {
   &:before,
@@ -70,6 +70,8 @@
 #dev_debug_captures,
 #dev_debug_persistent
 {
+	* { box-sizing: border-box; }
+
 	.ddprint
 	{
 		background-color: @ddbase;
@@ -168,6 +170,11 @@
 		{
 			position: relative;
 
+			.output-tabs {
+				.clearfix();
+				float: left;
+			}
+
 			.dump-tabs
 			{
 				margin: 0;
@@ -203,18 +210,20 @@
 			}
 			.panels {
 				float: left;
-				width: 80%; // leave some room on the right side
+				width: 90%; // leave some room on the right side
 				max-width: @maxWidth - 92px - 20; // tabs + 2x padding
+				min-height: 99px; // tabs height
 				border-left: 2px solid #D3D3D3;
 			}
 			.dump-panel {
 				background: @smoke;
 				padding: 10px;
+				border: 0;
 				font-family: @monospace;
 				font-size: 13px;
 				line-height: 1.5em;
 				white-space: pre-wrap;
-				display:none;
+				display: none;
 				&.active {
 					display: block;
 				}
@@ -244,4 +253,8 @@
 		// currently not supported yet
 		//.toggle-meta { display:none; }
 	}
+}
+
+#dev_debug_log {
+	font-family: @monospace;
 }
