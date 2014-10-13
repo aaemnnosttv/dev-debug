@@ -49,8 +49,8 @@ class DevDebug
 	private $hooks = array(
 		'styles' => array(
 			'login_head',
-			'wp_print_styles',
-			'admin_print_styles'
+			'wp_head',
+			'admin_head'
 		),
 		'scripts' => array(
 			'login_footer',
