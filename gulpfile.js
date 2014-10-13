@@ -65,7 +65,7 @@ gulp.task('js', ['jshint'], function() {
 
 
 gulp.task('version', function() {
-  return gulp.src(['assets/dev-debug.css', 'assets/dev-debug.min.js'], { base: 'assets' })
+  return gulp.src(['assets/dist/dev-debug.min.css', 'assets/dist/dev-debug.min.js'], { base: 'assets/dist' })
     .pipe(rev())
     .pipe(gulp.dest('assets'))
     .pipe(rev.manifest())

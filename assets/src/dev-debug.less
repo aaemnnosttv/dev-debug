@@ -42,13 +42,6 @@
 
 @import "icons.less";
 
-#debug-menu-link-DevDebug_DebugBar_Captures .count
-{
-	padding: 0 10px;
-	background: @gray;
-	float: right;
-}
-
 #wp-admin-bar-dev-debug
 {
 	.undefined > .ab-item > span {
@@ -176,24 +169,26 @@
 
 			.output-tabs {
 				.clearfix();
-				float: left;
+				// float: left;
 			}
 
 			.dump-tabs
 			{
 				margin: 0;
 				padding: 0;
-				//width: 5%;
+				// width: 5%;
 				//max-width: 60px;
-				float: left;
+				// float: left;
 				li
 				{
+					float: left;
+					width: percentage(1 / 3);
 					margin: 0;
 					padding: 0;
 					background: #f7f7f7;
 					list-style: none;
-					border-left: 3px solid @grayLighter - 19;
-					border-bottom: 1px solid @grayLighter - 5;
+					border-left: 3px solid (@grayLighter - 19);
+					border-bottom: 1px solid (@grayLighter - 5);
 					a {
 						background: none;
 						text-decoration: none !important;
@@ -213,14 +208,15 @@
 				}
 			}
 			.panels {
-				float: left;
-				width: 90%; // leave some room on the right side
+				// float: left;
+				// width: 90%;
 				max-width: @maxWidth - 92px - 20; // tabs + 2x padding
-				min-height: 99px; // tabs height
+				// min-height: 99px; // tabs height
 				border-left: 2px solid #D3D3D3;
 			}
 			.dump-panel {
 				background: @smoke;
+				margin: 0;
 				padding: 10px;
 				border: 0;
 				font-family: @monospace;
@@ -256,6 +252,21 @@
 
 		// currently not supported yet
 		//.toggle-meta { display:none; }
+	}
+}
+
+#debug-menu-link-DevDebug_DebugBar_Captures .count
+{
+	padding: 0 10px;
+	background: @gray;
+	float: right;
+}
+
+#debug-menu-target-DevDebug_DebugBar_Captures
+{
+	#dev_debug_captures .ddprint {
+		max-width: none;
+		width: 100%;
 	}
 }
 
