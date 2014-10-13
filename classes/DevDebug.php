@@ -163,9 +163,9 @@ class DevDebug
 		return !( self::const_value( 'DEVDEBUG_NO_ADMIN_BAR' ) );
 	}
 
-	function get_screen()
+	function get_screen( WP_Screen $screen )
 	{
-		$this->screen = get_current_screen();
+		$this->screen = $screen;
 	}
 
 	function print_styles()
