@@ -170,22 +170,32 @@ class DevDebug
 
 	function print_styles()
 	{
-		if ( ! wp_style_is( 'dev-debug', 'done' ) )
+		if ( ! wp_style_is( 'dev-debug', 'done' ) && ! $this->did_styles )
 		{
-			$css = file_get_contents( "{$this->dir}/assets/dist/dev-debug.min.css" );
-			echo "<!-- DevDebug Styles -->\n
-			<style type='text/css'>$css</style>\n";
+			if ( wp_style_is( 'dev-debug', 'registered' ) )
+				wp_print_styles( 'dev-debug' );
+			else
+			{
+				$css = file_get_contents( "{$this->dir}/assets/dist/dev-debug.min.css" );
+				echo "<!-- Dev Debug Fallback Styles dev-debug.min.css -->\n
+				<style type='text/css'>$css</style>\n";
+			}
 		}
 		$this->did_styles = true;
 	}
 
 	function print_scripts()
 	{
-		if ( ! wp_script_is( 'dev-debug', 'done' ) )
+		if ( ! wp_script_is( 'dev-debug', 'done' ) && ! $this->did_scripts )
 		{
-			$scripts = file_get_contents( "{$this->dir}/assets/dist/dev-debug.min.js" );
-			echo "<!-- DevDebug Scripts -->\n
-			<script type='text/javascript'>$scripts</script>\n";
+			if ( wp_script_is( 'dev-debug', 'registered' ) )
+				wp_print_scripts( 'dev-debug' );
+			else
+			{
+				$scripts = file_get_contents( "{$this->dir}/assets/dist/dev-debug.min.js" );
+				echo "<!-- Dev Debug Fallback Scripts dev-debug.min.js -->\n
+				<script type='text/javascript'>$scripts</script>\n";
+			}
 		}
 		$this->did_scripts = true;
 	}
