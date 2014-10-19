@@ -63,175 +63,176 @@
 #dev_debug_captures,
 #dev_debug_persistent
 {
+
+}
+.ddprint
+{
 	* {
 		@import "normalize";
 		box-sizing: border-box;
 		border-radius: 0;
 	}
+	
+	background-color: @ddbase;
+	color: #444;
 
-	.ddprint
+	font-family: @monospace;
+	font-size: 12px;
+	text-align: left;
+
+	border: 1px solid #999;
+	border-radius: 0;
+
+	position: relative;
+	z-index: 1;
+
+	box-sizing: border-box;
+	padding: 0;
+	margin: 1em auto;
+
+	width: 90%;
+	max-width: @maxWidth;
+	word-break: break-all;
+
+	::selection {
+		background: rgba(9, 185, 1, 0.25);
+		color: inherit;
+		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+	}
+
+	.title {
+		.clearfix();
+		display: block;
+		font-size: 20px;
+		font-weight: normal;
+		background: #444;
+		color: #f7f7f7;
+		padding: 0.5em 1em;
+	}
+	.toggles {
+		float: right;
+		a {
+			text-decoration: none !important;
+			color: @smoke !important;
+			&:hover { color: #f0f0f0; }
+		}
+	}
+	.meta {
+		display: block;
+		padding: 0 0 0 1em;
+		border-bottom: 1px solid gray;
+		background: @orange;
+		overflow: hidden;
+
+		ol {
+			list-style-type: decimal;
+			margin-left: 2em;
+		}
+		.backtrace {
+			//padding: 1em;
+			background: lighten( @ddbase, 5 );
+			.trace {
+				padding: 5px 17px;
+				&.even { background: fade(black, 2); }
+			}
+			.trace-error {
+				padding: 1em;
+			}
+		}
+		.called {
+			font-weight: bold;
+			.class,
+			.args .instance { font-style: italic; color: @blue; }
+			.call-type { font-weight: normal; }
+			.function,
+			.method {
+				color: @pink;
+			}
+			.args {
+				.arg { border-bottom: 1px dotted fade( @gray, 50 ); }
+				.boolean { color: @purple; }
+			}
+		}
+		.filemeta {
+			.line {
+				display: inline-block;
+				background: fade(black,7);
+				color: @gray;
+				padding: 1px 3px;
+				border-radius: 2px;
+				font-size: 11px;
+				line-height: 15px;
+			}
+		}
+	}
+	.output
 	{
-		background-color: @ddbase;
-		color: #444;
-
-		font-family: @monospace;
-		font-size: 12px;
-		text-align: left;
-
-		border: 1px solid #999;
-		border-radius: 0;
-
 		position: relative;
-		z-index: 1;
 
-		box-sizing: border-box;
-		padding: 0;
-		margin: 1em auto;
-
-		width: 90%;
-		max-width: @maxWidth;
-		word-break: break-all;
-
-		::selection {
-			background: rgba(9, 185, 1, 0.25);
-			color: inherit;
-			text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-		}
-
-		.title {
+		.output-tabs {
 			.clearfix();
-			display: block;
-			font-size: 20px;
-			font-weight: normal;
-			background: #444;
-			color: #f7f7f7;
-			padding: 0.5em 1em;
+			// float: left;
 		}
-		.toggles {
-			float: right;
-			a {
-				text-decoration: none !important;
-				color: @smoke !important;
-				&:hover { color: #f0f0f0; }
-			}
-		}
-		.meta {
-			display: block;
-			padding: 0 0 0 1em;
-			border-bottom: 1px solid gray;
-			background: @orange;
-			overflow: hidden;
 
-			ol {
-				list-style-type: decimal;
-				margin-left: 2em;
-			}
-			.backtrace {
-				//padding: 1em;
-				background: lighten( @ddbase, 5 );
-				.trace {
-					padding: 5px 17px;
-					&.even { background: fade(black, 2); }
-				}
-				.trace-error {
-					padding: 1em;
-				}
-			}
-			.called {
-				font-weight: bold;
-				.class,
-				.args .instance { font-style: italic; color: @blue; }
-				.call-type { font-weight: normal; }
-				.function,
-				.method {
-					color: @pink;
-				}
-				.args {
-					.arg { border-bottom: 1px dotted fade( @gray, 50 ); }
-					.boolean { color: @purple; }
-				}
-			}
-			.filemeta {
-				.line {
-					display: inline-block;
-					background: fade(black,7);
-					color: @gray;
-					padding: 1px 3px;
-					border-radius: 2px;
-					font-size: 11px;
-					line-height: 15px;
-				}
-			}
-		}
-		.output
+		.dump-tabs
 		{
-			position: relative;
-
-			.output-tabs {
-				.clearfix();
-				// float: left;
-			}
-
-			.dump-tabs
+			margin: 0;
+			padding: 0;
+			// width: 5%;
+			//max-width: 60px;
+			// float: left;
+			li
 			{
+				float: left;
+				width: percentage(1 / 3);
 				margin: 0;
 				padding: 0;
-				// width: 5%;
-				//max-width: 60px;
-				// float: left;
-				li
-				{
-					float: left;
-					width: percentage(1 / 3);
-					margin: 0;
-					padding: 0;
-					background: #f7f7f7;
-					list-style: none;
-					border-left: 3px solid (@grayLighter - 19);
-					border-bottom: 1px solid (@grayLighter - 5);
-					a {
-						background: none;
-						text-decoration: none !important;
-						color: gray !important;
-						font-size: 13px;
-						line-height: 28px;
-						padding: 2px 11px;
-						display: block;
-					}
-
-					&:hover,
-					&.active {
-						background: white;
-						border-left: 3px solid @orange;
-						a { color: @red !important; }
-					}
-				}
-			}
-			.panels {
-				// float: left;
-				// width: 90%;
-				// max-width: @maxWidth - 92px - 20; // tabs + 2x padding
-				// min-height: 99px; // tabs height
-				// border-left: 2px solid #D3D3D3;
-			}
-			.dump-panel {
-				background: @smoke;
-				margin: 0;
-				padding: 10px;
-				border: 0;
-				font-family: @monospace;
-				font-size: 13px;
-				line-height: 1.5em;
-				white-space: pre-wrap;
-				display: none;
-				&.active {
+				background: #f7f7f7;
+				list-style: none;
+				border-left: 3px solid (@grayLighter - 19);
+				border-bottom: 1px solid (@grayLighter - 5);
+				a {
+					background: none;
+					text-decoration: none !important;
+					color: gray !important;
+					font-size: 13px;
+					line-height: 28px;
+					padding: 2px 11px;
 					display: block;
+				}
+
+				&:hover,
+				&.active {
+					background: white;
+					border-left: 3px solid @orange;
+					a { color: @red !important; }
 				}
 			}
 		}
-		&.last {}
-	} // .ddprint
-}
+		.panels {
+			// float: left;
+			// width: 90%;
+			// max-width: @maxWidth - 92px - 20; // tabs + 2x padding
+			// min-height: 99px; // tabs height
+			// border-left: 2px solid #D3D3D3;
+		}
+		.dump-panel {
+			background: @smoke;
+			margin: 0;
+			padding: 10px;
+			border: 0;
+			font-family: @monospace;
+			font-size: 13px;
+			line-height: 1.5em;
+			white-space: pre-wrap;
+			display: none;
+			&.active {
+				display: block;
+			}
+		}
+	}
+	&.last {}
+} // .ddprint
 
 #dev_debug_captures
 {
