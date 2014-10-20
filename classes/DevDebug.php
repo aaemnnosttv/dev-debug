@@ -170,7 +170,10 @@ class DevDebug
 
 	function print_styles()
 	{
-		if ( ! wp_style_is( 'dev-debug', 'done' ) && ! $this->did_styles )
+		if ( ! wp_style_is( 'dev-debug', 'done' )
+			&& ! $this->did_styles
+			&& ! $this->suppress_output_captured()
+			)
 		{
 			if ( wp_style_is( 'dev-debug', 'registered' ) )
 				wp_print_styles( 'dev-debug' );
@@ -186,7 +189,10 @@ class DevDebug
 
 	function print_scripts()
 	{
-		if ( ! wp_script_is( 'dev-debug', 'done' ) && ! $this->did_scripts )
+		if ( ! wp_script_is( 'dev-debug', 'done' )
+			&& ! $this->did_scripts
+			&& ! $this->suppress_output_captured()
+			)
 		{
 			if ( wp_script_is( 'dev-debug', 'registered' ) )
 				wp_print_scripts( 'dev-debug' );
@@ -345,6 +351,27 @@ class DevDebug
 	function suppress_output_captured()
 	{
 		$suppress = false;
+
+		$headers = headers_list();
+
+		if ( headers_sent() && is_array( $headers ) )
+		{
+			foreach( $headers as $header )
+			{
+				if ( 0 === stripos($header, 'Content-type:') )
+				{
+					// a content-type header has been sent
+
+					if ( false === stripos($header,'text/html') )
+					{
+						$suppress = true;
+						self::log('output suppressed: non-html content-type request', __METHOD__, DevDebug_Logger::DEBUG);
+					}
+
+					break;
+				}
+			}
+		}
 
 		if ( empty( $this->captured ) )
 		{
