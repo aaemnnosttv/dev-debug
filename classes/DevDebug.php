@@ -49,8 +49,8 @@ class DevDebug
 	private $hooks = array(
 		'styles' => array(
 			'login_head',
-			'wp_print_styles',
-			'admin_print_styles'
+			'wp_head',
+			'admin_head'
 		),
 		'scripts' => array(
 			'login_footer',
@@ -87,8 +87,8 @@ class DevDebug
 	{
 		// load internal logging
 		//require_once "DevDebug_Logger.php";
-
 		$this->dir = dirname( dirname( __FILE__ ) );
+		$this->uri = plugins_url( '', "$this->dir/dev-debug.php" );
 		$this->doing_ajax = (bool) self::const_value('DOING_AJAX');
 
 		/**
@@ -96,18 +96,23 @@ class DevDebug
 		 * filter 'ddbug/logging/path'
 		 */
 		$log_dir = apply_filters( 'ddbug/logging/path', WP_CONTENT_DIR );
-		self::$logger = new DevDebug_Logger( path_join( $log_dir, '.htdev-debug.log' ), self::$log_level );
+		$this->log_filepath = path_join( $log_dir, '.htdev-debug.log' );
+		self::$logger = new DevDebug_Logger( $this->log_filepath, self::$log_level );
 
 		// init
 		add_action( 'init',	array($this, 'init') );
 		// output!
 		add_action( 'shutdown', array($this, 'output_captured') );
+
+		do_action( 'ddbug/ready', $this );
 	}
 
 	function init()
 	{
 		if ( $this->show_in_admin_bar() && is_admin_bar_showing() )
-			add_action( 'admin_bar_menu',	array($this, 'dev_admin_menu') );
+			add_action( 'admin_bar_menu'	, array($this, 'dev_admin_menu') );
+			
+		add_filter( 'debug_bar_panels'	, array($this, 'init_debug_bar_panels') );
 
 		if ( self::is_debug_set() )
 		{
@@ -122,11 +127,30 @@ class DevDebug
 		//add_action( 'admin_notices',	array($this, 'print_persistent_capture' ) );
 		add_action( 'current_screen',	array($this, 'get_screen') );
 
+		wp_enqueue_style( 'dev-debug', "{$this->uri}/assets/dist/dev-debug.min.css" );
+		wp_enqueue_script( 'dev-debug', "{$this->uri}/assets/dist/dev-debug.min.js", array('jquery'), false, true );
+
 		foreach ( $this->hooks['styles'] as $hook )
-			add_action( $hook,	array($this, 'print_styles') );
+			add_action( $hook,	array($this, 'print_styles'), 999 );
 
 		foreach ( $this->hooks['scripts'] as $hook )
-			add_action( $hook,	array($this, 'print_scripts') );
+			add_action( $hook,	array($this, 'print_scripts'), 999 );
+	}
+
+	public function init_debug_bar_panels( $panels )
+	{
+		$add_panels = array(
+			'DevDebug_DebugBar_Captures',
+			'DevDebug_DebugBar_Log'
+		);
+
+		foreach ( array_reverse($add_panels) as $panel_class )
+		{
+			require_once "$panel_class.php";
+			array_unshift( $panels, new $panel_class() );
+		}
+
+		return $panels;
 	}
 
 	/**
@@ -141,24 +165,46 @@ class DevDebug
 		return !( self::const_value( 'DEVDEBUG_NO_ADMIN_BAR' ) );
 	}
 
-	function get_screen()
+	function get_screen( WP_Screen $screen )
 	{
-		$this->screen = get_current_screen();
+		$this->screen = $screen;
 	}
 
 	function print_styles()
 	{
-		$css = file_get_contents( "{$this->dir}/assets/dev-debug.css" );
-		echo "<!-- DevDebug Styles -->\n
-		<style type='text/css'>$css</style>\n";
+		if ( ! wp_style_is( 'dev-debug', 'done' )
+			&& ! $this->did_styles
+			&& ! $this->suppress_output_captured()
+			)
+		{
+			if ( wp_style_is( 'dev-debug', 'registered' ) )
+				wp_print_styles( 'dev-debug' );
+			else
+			{
+				$css = file_get_contents( "{$this->dir}/assets/dist/dev-debug.min.css" );
+				echo "<!-- Dev Debug Fallback Styles dev-debug.min.css -->\n
+				<style type='text/css'>$css</style>\n";
+			}
+		}
 		$this->did_styles = true;
 	}
 
 	function print_scripts()
 	{
-		$scripts = file_get_contents( "{$this->dir}/assets/dev-debug.min.js" );
-		echo "<!-- DevDebug Scripts -->\n
-		<script type='text/javascript'>$scripts</script>\n";
+		if ( ! wp_script_is( 'dev-debug', 'done' )
+			&& ! $this->did_scripts
+			&& ! $this->suppress_output_captured()
+			)
+		{
+			if ( wp_script_is( 'dev-debug', 'registered' ) )
+				wp_print_scripts( 'dev-debug' );
+			else
+			{
+				$scripts = file_get_contents( "{$this->dir}/assets/dist/dev-debug.min.js" );
+				echo "<!-- Dev Debug Fallback Scripts dev-debug.min.js -->\n
+				<script type='text/javascript'>$scripts</script>\n";
+			}
+		}
 		$this->did_scripts = true;
 	}
 
@@ -248,6 +294,21 @@ class DevDebug
     	throw new ErrorException( $errstr, $errno, 0, $errfile, $errline );
 	}*/
 
+	public function capture_count()
+	{
+		return count( $this->captured );
+	}
+
+	public function has_captures()
+	{
+		return (bool) $this->capture_count();
+	}
+
+	public function get_captures()
+	{
+		return $this->captured;
+	}
+
 	/**
 	 * Shutdown callback
 	 */
@@ -292,6 +353,27 @@ class DevDebug
 	function suppress_output_captured()
 	{
 		$suppress = false;
+
+		$headers = headers_list();
+
+		if ( headers_sent() && is_array( $headers ) )
+		{
+			foreach( $headers as $header )
+			{
+				if ( 0 === stripos($header, 'Content-type:') )
+				{
+					// a content-type header has been sent
+
+					if ( false === stripos($header,'text/html') )
+					{
+						$suppress = true;
+						self::log('output suppressed: non-html content-type request', __METHOD__, DevDebug_Logger::DEBUG);
+					}
+
+					break;
+				}
+			}
+		}
 
 		if ( empty( $this->captured ) )
 		{
@@ -465,14 +547,12 @@ HTML;
 			// function
 			if ( isset( $data['class'] ) )
 			{
-				$f[ $i ]['func'] = "
-					<span class='class'>{$data['class']}</span>
-					<span class='call-type'>{$data['type']}</span>
-					<span class='method'>{$data['function']}</span>
-					";
+				$f[ $i ]['func']  = "<span class='class'>{$data['class']}</span>";
+				$f[ $i ]['func'] .= "<span class='call-type'>{$data['type']}</span>";
+				$f[ $i ]['func'] .= "<span class='method'>{$data['function']}</span>";
 			}
 			else
-				$f[ $i ]['func'] = "<span class='function'>{$data['function']}</span>";
+				$f[ $i ]['func']  = "<span class='function'>{$data['function']}</span>";
 		}
 
 		return $f;
@@ -710,6 +790,13 @@ HTML;
 		return esc_attr( strip_tags( $data ) );
 	}
 
+	public static function get_realm()
+	{
+		if ( self::const_value('DOING_AJAX') )
+			return 'ajax';
+
+		return is_admin() ? 'admin' : 'front';
+	}
 
 	/**
 	 * Low-level debugging
@@ -723,10 +810,7 @@ HTML;
 		if ( is_null( $level ) )
 			$level = DevDebug::$log_level;
 
-		$realm = is_admin() ? 'admin' : 'front';
-		$realm = (defined('DOING_AJAX') && DOING_AJAX) ? 'ajax' : $realm;
-
-		$log = "($realm)";
+		$log = sprintf( '(%s)', self::get_realm() );
 		$log .= is_scalar( $title ) ? "[$title]" : '';
 
 		if ( is_scalar( $msg ) )
