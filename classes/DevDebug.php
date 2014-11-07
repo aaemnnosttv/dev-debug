@@ -103,6 +103,8 @@ class DevDebug
 		add_action( 'init',	array($this, 'init') );
 		// output!
 		add_action( 'shutdown', array($this, 'output_captured') );
+
+		do_action( 'ddbug/ready', $this );
 	}
 
 	function init()
