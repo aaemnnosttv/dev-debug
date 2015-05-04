@@ -7,6 +7,9 @@ Dev Debug provides some handy functions for analyzing your code and giving some 
 
 In order to be available for use in early plugin execution, Dev Debug needs to be included first. It's for this reason that Dev Debug was designed as a [MU plugin](http://codex.wordpress.org/Must_Use_Plugins), but it may also be installed as a normal plugin.
 
+> Disclaimer: This plugin is a handy tool. It is not intended as a replacement for a real debugging solution like [Xdebug](http://xdebug.org/).  If you don't know what xdebug can do, drop what you're doing and check that out _immediately_. 
+> You can thank me later :smile:
+
 ## Basic Usage
 
 ### Non-persistent Data Capture
@@ -48,7 +51,7 @@ sdt( $data, $label = 'optional' );
 ```
 This function saves the captured data as a transient. It's captured output will appear with other captures as long as the data is still set.
 
-The `sdt()` capture has a short lifespan of only 2 minutes.
+The `sdt()` capture has a short lifespan of only 2 minutes by default.
 
 #### ddlog()
 ```php
@@ -58,7 +61,21 @@ ddlog( $data, $label = 'optional' );
 This function writes the data to a log file.
 By default, the file is located in the `wp-content/.htdev-debug.log`.  The destination directory can be changed with the `ddbug/logging/path` filter if desired.
 
-> Most standard Apache and Nginx configurations include rules to block external access to files that begin with `.ht` such as `.htaccess` and `.htpasswd`.  The `.htdev-debug` file could possibly contain very sensitive information so it is not recommended to be used on production environments.  
+> Most standard Apache and Nginx configurations include rules to block external access to files that begin with `.ht` such as `.htaccess` and `.htpasswd`.  The `.htdev-debug` file could possibly contain very sensitive information so it is not recommended to be used on production environments, however this filename aims to protect unauthorized access for those that choose to live on the wild side.
+
+## Hook Inspection
+
+Ever want to know what the heck is going on during a particular action or filter?
+
+```php
+ddhook('the_content')
+```
+[![thumb](http://f.cl.ly/items/320o0T3r3w2M0Z2J2X0c/Image%202015-05-03%20at%209.53.26%20PM.png)](http://cl.ly/image/2E192D2B0Y0A)
+
+The `ddhook` function will produce a non-persistent capture of all of the callbacks attached to the given hook.
+It can also be configured to listen for a given number of arguments that are passed, and provide an additional capture of the arguments passed to the callback.
+
+![thumb](https://s3.amazonaws.com/f.cl.ly/items/152K1M0A1S3Y2i0G2s2R/Image%202015-05-03%20at%209.55.17%20PM.png)
 
 ## Menu Item
 
@@ -66,7 +83,13 @@ Dev Debug also adds an admin menu item for clearing the persistent debug capture
 
 <img src="http://cl.ly/image/2a070b1A1q1n/Image%202014-03-24%20at%2012.25.01%20PM.png" alt="">  
 
-Constants with truthy values are green, falsy are gray, and undefined are faded/italic for quick reference. The constant's values can also be seen on hover.   
+Constants with truthy values are green, falsy are gray, and undefined are faded/italic for quick reference. The constant's values can also be seen on hover.
+
+## Debug Bar
+
+Dev Debug integrates with the [Debug Bar](https://wordpress.org/plugins/debug-bar/) plugin out of the box, by adding a panels to its overlay for showing captured dumps, as well as quick in-app access to viewing the Dev Debug log.
+
+![thumb](http://f.cl.ly/items/1W1v2i1W210y3q2N272U/Image%202015-05-03%20at%209.59.22%20PM.png)
 
 ## Installation
 
@@ -74,7 +97,7 @@ Dev Debug can be installed in a few different ways.
 
 ### Via Composer
 Use
-`composer require aaemnnosttv/dev-debug:*`
+`composer require aaemnnosttv/dev-debug`
 to add the latest release of the package to your project and install it as an MU plugin.
 
 ### Via Git
