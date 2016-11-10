@@ -7,11 +7,11 @@
     	{
     		"name": "Evan Mattson",
     		"email": "me@aaemnnost.tv",
-    		"homepage": "http://aaemnnost.tv",
+    		"homepage": "https://aaemnnost.tv",
     		"role": "Developer"
     	}
     ],
     "require": {
-	    "composer/installers": "~1.0.6"
-	}
+	    "composer/installers": "^1.0"
+    }
 }
