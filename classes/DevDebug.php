@@ -385,9 +385,9 @@ class DevDebug
 			self::log('output suppressed: doing ajax', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
-		elseif ( defined('WP_CLI') && WP_CLI )
+		elseif ( PHP_SAPI == 'cli' )
 		{
-			self::log('output suppressed: wp-cli', __METHOD__, DevDebug_Logger::DEBUG);
+			self::log('output suppressed: cli', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( !empty( $this->screen->id ) && ('async-upload' == $this->screen->id) )
