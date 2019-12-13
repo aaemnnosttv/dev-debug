@@ -172,21 +172,12 @@ class DevDebug
 
 	function print_styles()
 	{
-		if ( ! wp_style_is( 'dev-debug', 'done' )
-			&& ! $this->did_styles
-			&& ! $this->suppress_output_captured()
-			)
-		{
-			if ( wp_style_is( 'dev-debug', 'registered' ) )
-				wp_print_styles( 'dev-debug' );
-			else
-			{
-				$css = file_get_contents( "{$this->dir}/assets/dist/dev-debug.min.css" );
-				echo "<!-- Dev Debug Fallback Styles dev-debug.min.css -->\n
-				<style type='text/css'>$css</style>\n";
-			}
+		if (! $this->did_styles && ! $this->suppress_output_captured()) {
+            printf('<style id="dev-debug-style" type="text/css">%s</style>',
+                file_get_contents("{$this->dir}/assets/dist/dev-debug.min.css")
+            );
+		    $this->did_styles = true;
 		}
-		$this->did_styles = true;
 	}
 
 	function print_scripts()
