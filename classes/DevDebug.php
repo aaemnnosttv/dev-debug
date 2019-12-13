@@ -215,7 +215,8 @@ class DevDebug
 		echo '<div id="dev_debug_captures">';
 
 		foreach ( $this->captured as $args ) {
-			echo $this->format_output( $args );
+            $this->uid = wp_unique_id( 'ddcapture_' );
+            echo $this->format_output( $args );
 		}
 
 		echo '</div>';
@@ -298,7 +299,7 @@ class DevDebug
 		$tabs   = $this->render_dump_tabs( $dumps );
 		$panels = $this->render_dump_panels( $dumps );
 
-		$uid  = wp_unique_id( 'ddcapture_' );
+		$uid = $this->uid;
 		$html = <<<HTML
 		<div class="ddprint $classes">
 			<div class="title">$title
@@ -331,14 +332,14 @@ HTML;
 		$keys  = array_keys( $dumps );
 		$first = $keys[0];
 
-		foreach ( $dumps as $type => $d )
-		{
+		foreach ( $dumps as $type => $d ) {
 			$classes = $type;
 
 			if ( $first == $type )
 				$classes .= ' active';
 
-			$items .= "<li class='$classes'><a href='#' data-dump-type='$type'>{$d['label']}</a></li>";
+			$label = sprintf('<label for="%s">%s</label>', "ddcapture_{$this->uid}_{$type}", $d['label']);
+			$items .= "<li class='$classes'>$label</li>";
 		}
 
 		return "<ul class='dump-tabs'>$items</ul>";
@@ -352,9 +353,14 @@ HTML;
 
 		foreach ( $dumps as $type => $d )
 		{
-			$class = ( $first == $type ) ? 'active' : '';
-			$dump_html = esc_html( $d['dump'] );
-			$out .= "<pre class='dump-panel $class' dump-type='$type'>$dump_html</pre>\n";
+			if ('vardump' === $type && extension_loaded('xdebug')) {
+			    $dump_html = $d['dump'];
+            } else {
+			    $dump_html = esc_html( $d['dump'] );
+            }
+			$checked = checked( $first === $type, true, false );
+			$out .= "<input type='radio' id='ddcapture_{$this->uid}_{$type}' name='ddcapture_{$this->uid}' style='display: none;' $checked data-dump-panel-display>";
+			$out .= "<pre class='dump-panel dump-panel-{$type}' style='display: none;'>$dump_html</pre>\n";
 		}
 
 		return $out;
