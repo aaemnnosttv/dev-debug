@@ -37,12 +37,6 @@ class DevDebug
 	private $did_styles;
 
 	/**
-	 * [$did_scripts description]
-	 * @var [type]
-	 */
-	private $did_scripts;
-
-	/**
 	 * Sets the minimun level to log
 	 *
 	 * const DEBUG	= 1;	// Most Verbose
@@ -151,25 +145,6 @@ class DevDebug
             );
 		    $this->did_styles = true;
 		}
-	}
-
-	function print_scripts()
-	{
-		if ( ! wp_script_is( 'dev-debug', 'done' )
-			&& ! $this->did_scripts
-			&& ! $this->suppress_output_captured()
-			)
-		{
-			if ( wp_script_is( 'dev-debug', 'registered' ) )
-				wp_print_scripts( 'dev-debug' );
-			else
-			{
-				$scripts = file_get_contents( "{$this->dir}/assets/dist/dev-debug.min.js" );
-				echo "<!-- Dev Debug Fallback Scripts dev-debug.min.js -->\n
-				<script type='text/javascript'>$scripts</script>\n";
-			}
-		}
-		$this->did_scripts = true;
 	}
 
 	public function analyze( $data, $args = array() )
