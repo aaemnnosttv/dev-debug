@@ -43,24 +43,6 @@ class DevDebug
 	private $did_scripts;
 
 	/**
-	 * [$hooks description]
-	 * @var array
-	 */
-	private $hooks = array(
-		'styles' => array(
-			'login_head',
-			'wp_head',
-			'admin_head'
-		),
-		'scripts' => array(
-			'login_footer',
-			'wp_print_footer_scripts',
-			'admin_print_footer_scripts'
-		)
-	);
-
-
-	/**
 	 * Sets the minimun level to log
 	 *
 	 * const DEBUG	= 1;	// Most Verbose
@@ -126,15 +108,6 @@ class DevDebug
 
 		//add_action( 'admin_notices',	array($this, 'print_persistent_capture' ) );
 		add_action( 'current_screen',	array($this, 'get_screen') );
-
-		wp_enqueue_style( 'dev-debug', "{$this->uri}/assets/dist/dev-debug.min.css" );
-		wp_enqueue_script( 'dev-debug', "{$this->uri}/assets/dist/dev-debug.min.js", array('jquery'), false, true );
-
-		foreach ( $this->hooks['styles'] as $hook )
-			add_action( $hook,	array($this, 'print_styles'), 999 );
-
-		foreach ( $this->hooks['scripts'] as $hook )
-			add_action( $hook,	array($this, 'print_scripts'), 999 );
 	}
 
 	public function init_debug_bar_panels( $panels )
