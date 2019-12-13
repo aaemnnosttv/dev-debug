@@ -60,8 +60,9 @@
 
 .ddprint
 {
+    @import "normalize";
+
 	* {
-		@import "normalize";
 		box-sizing: border-box;
 		border-radius: 0;
 	}
@@ -106,6 +107,9 @@
 	}
 	.toggles {
 		float: right;
+		svg {
+			height: 1em;
+		}
 		a {
 			text-decoration: none !important;
 			color: @smoke !important;
