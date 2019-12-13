@@ -40,8 +40,6 @@
   }
 }
 
-@import "icons.less";
-
 #wp-admin-bar-dev-debug
 {
 	.undefined > .ab-item > span {
@@ -60,11 +58,6 @@
 	color: #c7c7c7;
 }
 
-#dev_debug_captures,
-#dev_debug_persistent
-{
-
-}
 .ddprint
 {
 	* {
@@ -131,7 +124,6 @@
 			margin-left: 2em;
 		}
 		.backtrace {
-			//padding: 1em;
 			background: lighten( @ddbase, 5 );
 			.trace {
 				padding: 5px 17px;
@@ -173,16 +165,12 @@
 
 		.output-tabs {
 			.clearfix();
-			// float: left;
 		}
 
 		.dump-tabs
 		{
 			margin: 0;
 			padding: 0;
-			// width: 5%;
-			//max-width: 60px;
-			// float: left;
 			li
 			{
 				float: left;
@@ -211,13 +199,6 @@
 				}
 			}
 		}
-		.panels {
-			// float: left;
-			// width: 90%;
-			// max-width: @maxWidth - 92px - 20; // tabs + 2x padding
-			// min-height: 99px; // tabs height
-			// border-left: 2px solid #D3D3D3;
-		}
 		.dump-panel {
 			background: @smoke;
 			margin: 0;
@@ -233,29 +214,11 @@
 			}
 		}
 	}
-	&.last {}
 } // .ddprint
 
 #dev_debug_captures
 {
 	margin-bottom: 50px;
-}
-
-// admin notices
-#dev_debug_persistent
-{
-	padding: 1em 0;
-
-	.sep {
-		color: #999;
-	}
-	.ddprint {
-		max-width: none;
-		margin: 1em 0;
-
-		// currently not supported yet
-		//.toggle-meta { display:none; }
-	}
 }
 
 #debug-menu-link-DevDebug_DebugBar_Captures .count
