@@ -10,10 +10,6 @@ class DevDebug
 
 	const slug = 'dev-debug';
 
-	const transient = 'dev_debug';
-
-	public static $persistent_timeout = 120;
-
 	/**
 	 * [$instance description]
 	 * @var [type]
@@ -87,20 +83,8 @@ class DevDebug
 	{
 		if ( $this->show_in_admin_bar() && is_admin_bar_showing() )
 			add_action( 'admin_bar_menu'	, array($this, 'dev_admin_menu') );
-			
+
 		add_filter( 'debug_bar_panels'	, array($this, 'init_debug_bar_panels') );
-
-		if ( self::is_debug_set() )
-		{
-			// clear transient with url
-			if ( isset( $_GET['cdt'] ) && $_GET['cdt'] )
-				self::clear_debug_transient();
-
-			$trans = self::get_debug_transient();
-			$this->analyze( $trans['data'], $trans );
-		}
-
-		//add_action( 'admin_notices',	array($this, 'print_persistent_capture' ) );
 		add_action( 'current_screen',	array($this, 'get_screen') );
 	}
 
@@ -156,7 +140,6 @@ class DevDebug
 			'echo'       => false,
 			'backtrace'  => array(),
 			'persistent' => false,
-			'timeout'    => self::$persistent_timeout,
 		);
 		$args = wp_parse_args( $args, $d );
 
@@ -170,13 +153,6 @@ class DevDebug
 			}
 			else
 				$args['title'] = $datatype;
-		}
-
-
-		if ( $args['persistent'] )
-		{
-			//self::log( $args );
-			self::set_debug_transient( $data, $args );
 		}
 
 		extract( $args );
@@ -548,92 +524,6 @@ HTML;
 		return array_filter( $new );
 	}
 
-	/**
-	 * Sets the debug data
-	 * Useful for capturing data when ddprint cannot
-	 * (eg: during ajax callback, pre-redirect, or pre-fatal error, etc)
-	 * @param [type]  $value  	debug data
-	 * @param integer $sec    	transient timeout
-	 */
-	public static function set_debug_transient( $data, $args = array() )
-	{
-		extract( $args );
-
-		try {
-			maybe_serialize( $backtrace ); // this blows up when trying to serialize a Closure
-		} catch ( Exception $e ) {
-		    self::log( 'Caught exception: ' . $e->getMessage(), __METHOD__, DevDebug_Logger::DEBUG );
-		    $backtrace = $e->getMessage();
-		}
-
-		$capture = array(
-			'data'      => $data,
-			'title'     => $title,
-			'backtrace' => $backtrace,
-			'time'      => current_time('timestamp')
-		);
-
-		set_transient( self::transient, $capture, $timeout );
-	}
-
-	public static function get_debug_transient()
-	{
-		return get_transient( self::transient );
-	}
-
-	public static function clear_debug_transient()
-	{
-		if ( self::is_debug_set() )
-			delete_transient( self::transient );
-	}
-
-
-	/**
-	 * Echos contents of debug transient into admin header
-	 */
-	function print_persistent_capture()
-	{
-		/*if ( !is_user_logged_in() || !current_user_can('administrator') )
-			return;*/
-
-		$set = self::is_debug_set();
-		$sep = '<span class="sep">|</span>';
-
-		?>
-		<div id="dev_debug_persistent" class="dev_debug <?php echo $set ? 'set' : ''; ?>">
-			<?php
-
-			echo '<span class="title">DEBUG</span> ';
-
-			if ( $set )
-			{
-				extract( get_transient('dev_debug') );
-
-				$output = $this->analyze( $data, array( 'echo' => 0, 'backtrace' => $backtrace ) ); // return
-
-				$meta = date( '@ g:i:s a', $time );
-
-				$title = $title ? "$meta $sep $title" : $meta;
-			}
-			else
-			{
-				$title  = sprintf('<em class="disabled"> %s </em>',
-					!empty( $_GET['cdt'] ) ? 'cleared' : 'not set'
-				);
-				$output = '';
-			}
-
-			echo "<span class='meta'>$title</span> <span class='output'>$output</span>";
-			?>
-		</div>
-		<?php
-	}
-
-	public static function is_debug_set()
-	{
-		return is_array( get_transient('dev_debug') );
-	}
-
 	function dev_admin_menu( $wpab )
 	{
 		// top level menu
@@ -641,14 +531,6 @@ HTML;
 			'parent' => 'top-secondary',
 			'id'     => self::slug,
 			'title'  => __CLASS__,
-		) );
-
-		// clear debug transient
-		$wpab->add_menu( array(
-			'parent' => self::slug,
-			'id'     => 'clear-debug',
-			'title'  => 'CLEAR DEBUG',
-			'href'   => add_query_arg( array('cdt' => 1) )
 		) );
 
 		$wpab->add_group( array(
