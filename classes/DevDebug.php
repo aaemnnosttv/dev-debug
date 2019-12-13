@@ -81,9 +81,6 @@ class DevDebug
 
 	function init()
 	{
-		if ( $this->show_in_admin_bar() && is_admin_bar_showing() )
-			add_action( 'admin_bar_menu'	, array($this, 'dev_admin_menu') );
-
 		add_filter( 'debug_bar_panels'	, array($this, 'init_debug_bar_panels') );
 		add_action( 'current_screen',	array($this, 'get_screen') );
 	}
@@ -102,18 +99,6 @@ class DevDebug
 		}
 
 		return $panels;
-	}
-
-	/**
-	 * Check if wp admin bar node should be created or not
-	 *
-	 * define('DEVDEBUG_NO_ADMIN_BAR', 1); // to hide
-	 *
-	 * @return [boolean]
-	 */
-	public function show_in_admin_bar()
-	{
-		return !( self::const_value( 'DEVDEBUG_NO_ADMIN_BAR' ) );
 	}
 
 	function get_screen( WP_Screen $screen )
@@ -523,61 +508,6 @@ HTML;
 
 		return array_filter( $new );
 	}
-
-	function dev_admin_menu( $wpab )
-	{
-		// top level menu
-		$wpab->add_menu( array(
-			'parent' => 'top-secondary',
-			'id'     => self::slug,
-			'title'  => __CLASS__,
-		) );
-
-		$wpab->add_group( array(
-			'parent' => self::slug,
-			'id'     => self::slug . '_constants',
-			'meta'   => array(
-				'class' => 'ab-sub-secondary',
-			),
-		) );
-
-		$constants = array(
-			'WP_DEBUG'               => true, // WP Debug / PHP error reporting
-			'WP_DEBUG_LOG'           => true, // PHP error logging
-			'WP_HTTP_BLOCK_EXTERNAL' => true, // disable WP HTTP class functions (wp_remote_get/post()...)
-			'SCRIPT_DEBUG'           => true, // uncompressed, non-concatenated scripts & styles (WP)
-			'RELOCATE'               => true, // for site migrations
-		);
-
-		/**
-		 * filter 'ddbug/admin_bar/constants'
-		 * @var array 	[CONSTANT => (bool) active]
-		 */
-		$constants = apply_filters( 'ddbug/admin_bar/constants', $constants );
-
-		foreach ( $constants as $c => $active )
-		{
-			if ( ! $active )
-				continue;
-
-			$defined = defined( $c );
-			$value   = self::const_value( $c );
-			$classes = array( $defined ? 'defined' : 'undefined' );
-
-			if ( $defined )
-				$classes[] = $value ? 'enabled' : 'disabled';
-
-			$wpab->add_menu( array(
-				'parent' => self::slug . '_constants',
-				'id'     => strtolower( $c ),
-				'title'  => "<span>$c</span>",
-				'meta'   => array(
-					'class' => implode(' ', $classes),
-					'title' => $defined ? $this->get_const_title( $c ) : 'UNDEFINED',
-				)
-			) );
-		}
-	} // dev_admin_menu
 
 	/**
 	 * Get the value of a constant without regard to its existence
