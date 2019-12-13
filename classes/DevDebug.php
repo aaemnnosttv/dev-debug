@@ -233,11 +233,9 @@ class DevDebug
 	{
 		$suppress = false;
 
-		$headers = headers_list();
-
-		if ( headers_sent() && is_array( $headers ) )
+		if ( headers_sent() )
 		{
-			foreach( $headers as $header )
+			foreach( headers_list() as $header )
 			{
 				if ( 0 === stripos($header, 'Content-type:') )
 				{
