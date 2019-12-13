@@ -204,11 +204,6 @@ class DevDebug
 		return (bool) $this->capture_count();
 	}
 
-	public function get_captures()
-	{
-		return $this->captured;
-	}
-
 	/**
 	 * Shutdown callback
 	 */
