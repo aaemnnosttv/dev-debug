@@ -234,11 +234,7 @@ class DevDebug
 
 		echo '<div id="dev_debug_captures">';
 
-		foreach ( $this->captured as $key => $args )
-		{
-			//if ( $key == (count( $this->captured )-1) )
-			//	$args['classes'] = 'last';
-
+		foreach ( $this->captured as $args ) {
 			echo $this->format_output( $args );
 		}
 
