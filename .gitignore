@@ -1,4 +1,5 @@
 # Local
 *.sublime-*
 README.html
+assets/dist/
 node_modules/*
