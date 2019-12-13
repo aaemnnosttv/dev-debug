@@ -268,19 +268,7 @@ class DevDebug
 
 		echo '</div>';
 
-
-		// if something catastrophic happened,
-		// make sure we're still lookin' good
-		if ( !$this->did_styles )
-		{
-			$this->print_styles();
-		}
-
-		if ( !$this->did_scripts )
-		{
-			wp_print_scripts( 'jquery' );
-			$this->print_scripts();
-		}
+        $this->print_styles();
 	}
 
 	/**
