@@ -368,9 +368,23 @@ HTML;
 
 	static function get_dump( $data )
 	{
-		ob_start();
+        $max_depth = ini_get('xdebug.var_display_max_depth');
+        $max_children = ini_get('xdebug.var_display_max_children');
+        $max_data = ini_get('xdebug.var_display_max_data');
+
+        ini_set('xdebug.var_display_max_depth', -1);
+        ini_set('xdebug.var_display_max_children', -1);
+        ini_set('xdebug.var_display_max_data', -1);
+
+        ob_start();
 		var_dump( $data );
-		return ob_get_clean();
+		$dump = ob_get_clean();
+
+        ini_set('xdebug.var_display_max_depth', $max_depth);
+        ini_set('xdebug.var_display_max_children', $max_children);
+        ini_set('xdebug.var_display_max_data', $max_data);
+
+		return $dump;
 	}
 
 	/**
