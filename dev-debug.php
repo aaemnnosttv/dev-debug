@@ -16,38 +16,6 @@ DevDebug::get_instance();
 
 // API
 
-if ( !function_exists('sdt') ) :
-/**
- * Set Debug Transient
- * @param  [type]  $debug  [description]
- * @param  string  $title  [description]
- * @param  integer $sec    [description]
- * @return [type]          [description]
- */
-function sdt( $data, $title = null, $sec = 120 )
-{
-	$args = array(
-		'persistent' => true,
-		'backtrace'  => debug_backtrace(false),
-		'timeout'    => $sec,
-		'title'      => $title,
-	);
-
-	return DevDebug::get_instance()->analyze( $data, $args );
-}
-endif;
-
-if ( !function_exists('cdt') ) :
-/**
- * Clear Debug Transient
- * @return [type] [description]
- */
-function cdt()
-{
-	DevDebug::clear_debug_transient();
-}
-endif;
-
 if ( !function_exists('ddprint') ) :
 /**
  * Capture data for analysis
