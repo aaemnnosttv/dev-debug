@@ -61,11 +61,6 @@ class DevDebug
 
 	private function __construct()
 	{
-		// load internal logging
-		//require_once "DevDebug_Logger.php";
-		$this->dir = dirname( dirname( __FILE__ ) );
-		$this->uri = plugins_url( '', "$this->dir/dev-debug.php" );
-
 		/**
 		 * Set the directory for to write debug log file to
 		 * filter 'ddbug/logging/path'
@@ -101,7 +96,7 @@ class DevDebug
 	{
 		if (! $this->did_styles && ! $this->suppress_output_captured()) {
             printf('<style id="dev-debug-style" type="text/css">%s</style>',
-                file_get_contents("{$this->dir}/assets/dist/dev-debug.min.css")
+                file_get_contents(DEVDEBUG_DIR . '/assets/dist/dev-debug.min.css')
             );
 		    $this->did_styles = true;
 		}
