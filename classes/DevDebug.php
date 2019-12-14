@@ -25,6 +25,10 @@ class DevDebug
 	 */
 	private $logger;
 	/**
+	 * @var string
+	 */
+	public $log_filepath;
+    /**
 	 * [$captured description]
 	 * @var array
 	 */
