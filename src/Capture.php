@@ -2,13 +2,17 @@
 
 namespace DevDebug;
 
+use DevDebug\Formatter\CaptureFormatter;
+
+/**
+ * @property-read mixed $data
+ * @property-read mixed $title
+ */
 class Capture
 {
     /**
-     * @var string
+     * @var array
      */
-    public $uid;
-
     public $args;
 
     /**
@@ -18,12 +22,20 @@ class Capture
      */
     public function __construct($args)
     {
-        $this->uid = uniqid();
         $this->args = $args;
     }
 
-    public static function fromArray(array $args)
+    public function formatter()
     {
-        return new static($args);
+        return new CaptureFormatter($this);
+    }
+
+    public function __get($name)
+    {
+        if (isset($this->args[$name])) {
+            return $this->args[$name];
+        }
+
+        return null;
     }
 }
