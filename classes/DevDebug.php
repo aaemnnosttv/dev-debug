@@ -1,5 +1,7 @@
 <?php
 
+use DevDebug\Capture;
+
 /**
  * @package DevDebug
  * @author  Evan Mattson @aaemnnosttv
@@ -146,16 +148,7 @@ class DevDebug
 		// get them all!
 		$args['dumps'] = $this->get_dumps( $data );
 
-		$formatted = $this->format_output( $args );
-
-		if ( $echo && !$this->doing_ajax )
-			echo $formatted;
-
-		elseif ( false === $echo )
-			$this->captured[] = $args; // unformatted
-
-		else
-			return $formatted; // 0, null, '', ...
+		$this->captured[] = Capture::fromArray($args);
 
 		// always return data - unless explicitly returning markup
 		// allows inline / "chainable" usage
@@ -214,9 +207,9 @@ class DevDebug
 
 		echo '<div id="dev_debug_captures">';
 
-		foreach ( $this->captured as $args ) {
-            $this->uid = wp_unique_id( 'ddcapture_' );
-            echo $this->format_output( $args );
+		foreach ( $this->captured as $capture ) {
+            $capture->uid = uniqid();
+            echo $this->format_output( $capture );
 		}
 
 		echo '</div>';
@@ -282,35 +275,23 @@ class DevDebug
 		return $suppress;
 	}
 
-	function format_output( $args = array() )
+	function format_output( Capture $capture )
 	{
-		$d = array(
-			'classes' => '',
-		);
+		$trace  = $this->get_backtrace_list( $capture->args['backtrace'] );
+		$tabs   = $this->render_dump_tabs( $capture );
+		$panels = $this->render_dump_panels( $capture );
 
-		extract( wp_parse_args( $args, $d ) );
-
-		if ( $classes && is_string( $classes ) )
-			$classes = explode( ' ', $classes );
-
-		$classes = implode(' ', (array) $classes);
-
-		$trace  = $this->get_backtrace_list( $backtrace );
-		$tabs   = $this->render_dump_tabs( $dumps );
-		$panels = $this->render_dump_panels( $dumps );
-
-		$uid = $this->uid;
 		$html = <<<HTML
-		<div class="ddprint $classes">
-			<div class="title">$title
+		<div class="ddprint">
+			<div class="title">{$capture->args['title']}
 				<span class="toggles">
-					<label class="toggle-meta" for="$uid">
+					<label class="toggle-meta" for="meta_{$capture->uid}">
 					    <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg>
 					</label>
 				</span>
 			</div>
 
-            <input type="checkbox" id="$uid" data-meta-display style="display:none;" />
+            <input type="checkbox" id="meta_{$capture->uid}" data-meta-display style="display:none;" />
 			<div class="meta" style="display:none;">
 				<div class="backtrace">$trace</div>
 			</div>
@@ -326,8 +307,9 @@ HTML;
 		return $html;
 	}
 
-	function render_dump_tabs( $dumps )
+	function render_dump_tabs( Capture $capture )
 	{
+	    $dumps = $capture->args['dumps'];
 		$items = '';
 		$keys  = array_keys( $dumps );
 		$first = $keys[0];
@@ -338,15 +320,16 @@ HTML;
 			if ( $first == $type )
 				$classes .= ' active';
 
-			$label = sprintf('<label for="%s">%s</label>', "ddcapture_{$this->uid}_{$type}", $d['label']);
+			$label = sprintf('<label for="%s">%s</label>', "ddcapture_{$capture->uid}_{$type}", $d['label']);
 			$items .= "<li class='$classes'>$label</li>";
 		}
 
 		return "<ul class='dump-tabs'>$items</ul>";
 	}
 
-	function render_dump_panels( $dumps )
+	function render_dump_panels( Capture $capture )
 	{
+        $dumps = $capture->args['dumps'];
 		$out = '';
 		$keys = array_keys( $dumps );
 		$first = $keys[0];
@@ -359,7 +342,7 @@ HTML;
 			    $dump_html = esc_html( $d['dump'] );
             }
 			$checked = checked( $first === $type, true, false );
-			$out .= "<input type='radio' id='ddcapture_{$this->uid}_{$type}' name='ddcapture_{$this->uid}' style='display: none;' $checked data-dump-panel-display>";
+			$out .= "<input type='radio' id='ddcapture_{$capture->uid}_{$type}' name='ddcapture_{$capture->uid}' style='display: none;' $checked data-dump-panel-display>";
 			$out .= "<pre class='dump-panel dump-panel-{$type}' style='display: none;'>$dump_html</pre>\n";
 		}
 
@@ -416,7 +399,7 @@ HTML;
 				? sprintf(' <span class="args">%s</span> ', implode(', ', $t['args']) )
 				: '';
 
-			$filemeta = $t['file'] ? "<span class='file'>{$t['file']}</span> <span class='line'>{$t['line']}</span>" : '';
+			$filemeta = $t['file'] ? "<span class='file'>{$t['file']}</span>:<span class='line'>{$t['line']}</span>" : '';
 
 			$line = <<<HTML
 			<div class="trace $lineclass">

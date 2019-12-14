@@ -11,6 +11,12 @@
     		"role": "Developer"
     	}
     ],
+    "autoload": {
+        "classmap": ["classes"],
+        "psr-4": {
+            "DevDebug\\": "src"
+        }
+    },
     "require": {
 	    "composer/installers": "^1.0"
     }

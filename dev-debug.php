@@ -7,8 +7,9 @@
 	Version: 1.0
 */
 
-require_once 'classes/DevDebug_Logger.php';
-require_once 'classes/DevDebug.php';
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
 
 #########################
 DevDebug::get_instance();
