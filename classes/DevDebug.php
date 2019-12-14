@@ -131,10 +131,11 @@ class DevDebug
 		$args = wp_parse_args( $args, $d );
 
 		$datatype = gettype( $data );
-		if ( !isset( $args['title'] ) )
-		{
-			if ( is_object( $data ) )
-			{
+		if ( !isset( $args['title'] ) ) {
+		    if ( is_array( $data ) ) {
+		        $count = count($data);
+		        $args['title'] = "array[$count]";
+            } elseif ( is_object( $data ) ) {
 				$class = get_class( $data );
 				$args['title'] = "$datatype ( $class )";
 			}
