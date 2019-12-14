@@ -28,7 +28,7 @@ class DevDebug
 	 * @var string
 	 */
 	public $log_filepath;
-    /**
+	/**
 	 * [$captured description]
 	 * @var array
 	 */
@@ -57,10 +57,10 @@ class DevDebug
 
 	public static function get_instance()
 	{
-        if ( is_null( self::$instance ) )
-            self::$instance = new self();
+		if ( is_null( self::$instance ) )
+			self::$instance = new self();
 
-        return self::$instance;
+		return self::$instance;
 	}
 
 	private function __construct()
@@ -75,12 +75,12 @@ class DevDebug
 	}
 
 	public function register()
-    {
+	{
 		add_action( 'shutdown', array($this, 'output_captured') );
 		add_filter( 'debug_bar_panels', array($this, 'init_debug_bar_panels') );
 
 		do_action( 'ddbug/ready', $this );
-    }
+	}
 
 	public function init_debug_bar_panels( $panels )
 	{
@@ -93,10 +93,10 @@ class DevDebug
 	function print_styles()
 	{
 		if (! $this->did_styles && ! $this->suppress_output_captured()) {
-            printf('<style id="dev-debug-style" type="text/css">%s</style>',
-                file_get_contents(DEVDEBUG_DIR . '/assets/dist/dev-debug.min.css')
-            );
-		    $this->did_styles = true;
+			printf('<style id="dev-debug-style" type="text/css">%s</style>',
+				file_get_contents(DEVDEBUG_DIR . '/assets/dist/dev-debug.min.css')
+			);
+			$this->did_styles = true;
 		}
 	}
 
@@ -112,10 +112,10 @@ class DevDebug
 
 		$datatype = gettype( $data );
 		if ( !isset( $args['title'] ) ) {
-		    if ( is_array( $data ) ) {
-		        $count = count($data);
-		        $args['title'] = "array[$count]";
-            } elseif ( is_object( $data ) ) {
+			if ( is_array( $data ) ) {
+				$count = count($data);
+				$args['title'] = "array[$count]";
+			} elseif ( is_object( $data ) ) {
 				$class = get_class( $data );
 				$args['title'] = "$datatype ( $class )";
 			}
@@ -507,17 +507,17 @@ HTML;
 
 	public static function get_realm()
 	{
-        if (wp_doing_cron()) {
-            return 'cron';
-        }
+		if (wp_doing_cron()) {
+			return 'cron';
+		}
 
-        if (wp_doing_ajax()) {
-            return 'ajax';
-        }
+		if (wp_doing_ajax()) {
+			return 'ajax';
+		}
 
-        if (self::const_value('REST_REQUEST')) {
-            return 'rest';
-        }
+		if (self::const_value('REST_REQUEST')) {
+			return 'rest';
+		}
 
 		return is_admin() ? 'admin' : 'front';
 	}
