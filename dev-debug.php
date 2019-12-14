@@ -25,13 +25,11 @@ if ( !function_exists('ddprint') ) :
  * Capture data for analysis
  * @param  [type]  $data  [description]
  * @param  boolean $title [description]
- * @param  boolean $echo  [description]
  * @return [type]         [description]
  */
-function ddprint( $data, $title = null, $echo = false )
+function ddprint( $data, $title = null )
 {
 	$args = array(
-		'echo'      => $echo,
 		'backtrace' => debug_backtrace(false),
 		'title'     => $title,
 	);

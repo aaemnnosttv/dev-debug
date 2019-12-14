@@ -103,9 +103,7 @@ class DevDebug
 		self::log( $data, __METHOD__, DevDebug_Logger::DEBUG );
 
 		$d = array(
-			'echo'       => false,
 			'backtrace'  => array(),
-			'persistent' => false,
 		);
 		$args = wp_parse_args( $args, $d );
 
