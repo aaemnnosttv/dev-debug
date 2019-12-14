@@ -209,10 +209,17 @@
 			font-size: 13px;
 			line-height: 1.5em;
 			white-space: pre-wrap;
-        }
-    }
-    [data-meta-display]:checked + .meta,
-    [data-dump-panel-display]:checked + .dump-panel {
+		}
+		.xdebug-var-dump {
+			margin: 0;
+
+			> small:first-child {
+				display: none;
+			}
+		}
+	}
+	[data-meta-display]:checked + .meta,
+	[data-dump-panel-display]:checked + .dump-panel {
 		display: block !important;
 	}
 } // .ddprint
