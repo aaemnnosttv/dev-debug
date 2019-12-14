@@ -160,11 +160,6 @@ class DevDebug
 		return $d;
 	}
 
-	/*function exception_handler( $errno, $errstr, $errfile, $errline )
-	{
-    	throw new ErrorException( $errstr, $errno, 0, $errfile, $errline );
-	}*/
-
 	public function capture_count()
 	{
 		return count( $this->captured );
