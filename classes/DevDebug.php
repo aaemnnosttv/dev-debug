@@ -399,7 +399,7 @@ HTML;
 				? sprintf(' <span class="args">%s</span> ', implode(', ', $t['args']) )
 				: '';
 
-			$filemeta = $t['file'] ? "<span class='file'>{$t['file']}</span>:<span class='line'>{$t['line']}</span>" : '';
+			$filemeta = $t['file'] ? "<span class='file'>{$t['file']}</span><span class='line'>:{$t['line']}</span>" : '';
 
 			$line = <<<HTML
 			<div class="trace $lineclass">
