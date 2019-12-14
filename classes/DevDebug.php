@@ -503,18 +503,6 @@ HTML;
 		return $value;
 	}
 
-	/**
-	 * Returns a sanitized html title attribute value for a given constant
-	 * @param  [type] $value [description]
-	 * @return [type]        [description]
-	 */
-	function get_const_title( $c )
-	{
-		$value = self::const_value( $c );
-		$data = self::get_dump( $value );
-		return esc_attr( strip_tags( $data ) );
-	}
-
 	public static function get_realm()
 	{
 		if ( self::const_value('DOING_AJAX') )
