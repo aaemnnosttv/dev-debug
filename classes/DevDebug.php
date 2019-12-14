@@ -477,7 +477,7 @@ HTML;
 				}
 				else
 				{
-					if ( $recurse )
+					if ( $recurse && count( $a ) < 10 )
 						$n = 'array('. join( ',', $this->format_args( $a ) ) .')';
 					else
 						$n = 'array(::'. count( $a ) .'::)';
