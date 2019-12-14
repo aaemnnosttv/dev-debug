@@ -87,11 +87,6 @@ class DevDebug
 		return $panels;
 	}
 
-	function get_screen( WP_Screen $screen )
-	{
-		$this->screen = $screen;
-	}
-
 	function print_styles()
 	{
 		if (! $this->did_styles && ! $this->suppress_output_captured()) {
@@ -246,7 +241,7 @@ class DevDebug
 			self::log('output suppressed: cli', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
-		elseif ( !empty( $this->screen->id ) && ('async-upload' == $this->screen->id) )
+		elseif ( $this->is_screen_id('async-upload') )
 		{
 			self::log('output suppressed: media upload', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
@@ -259,6 +254,17 @@ class DevDebug
 
 		return $suppress;
 	}
+
+	protected function is_screen_id($id)
+    {
+        $screen = get_current_screen();
+
+        if ( ! $screen ) {
+            return false;
+        }
+
+        return $id === $screen->id;
+    }
 
 	function format_output( Capture $capture )
 	{
