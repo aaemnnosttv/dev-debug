@@ -1,6 +1,8 @@
 <?php
 
 use DevDebug\Capture;
+use DevDebug\DebugBar\CapturesPanel;
+use DevDebug\DebugBar\LogPanel;
 
 /**
  * @package DevDebug
@@ -89,16 +91,8 @@ class DevDebug
 
 	public function init_debug_bar_panels( $panels )
 	{
-		$add_panels = array(
-			'DevDebug_DebugBar_Captures',
-			'DevDebug_DebugBar_Log'
-		);
-
-		foreach ( array_reverse($add_panels) as $panel_class )
-		{
-			require_once "$panel_class.php";
-			array_unshift( $panels, new $panel_class() );
-		}
+		array_unshift( $panels, new LogPanel( 'DevDebug Log' ) );
+		array_unshift( $panels, new CapturesPanel( 'DevDebug Captures' ) );
 
 		return $panels;
 	}

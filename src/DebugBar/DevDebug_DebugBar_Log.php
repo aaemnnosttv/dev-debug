@@ -1,18 +1,20 @@
 <?php
 
+namespace DevDebug\DebugBar;
 
-class DevDebug_DebugBar_Log extends Debug_Bar_Panel
+use Debug_Bar_Panel;
+use DevDebug;
+
+class LogPanel extends Debug_Bar_Panel
 {
-	function init()
+    function init()
 	{
-		$this->api = DevDebug::get_instance();
-		$this->title( 'DevDebug Log' );
-		$this->_visible = (bool) filesize( $this->api->log_filepath );
+	    $this->set_visible(file_exists( DevDebug::get_instance()->log_filepath ));
 	}
 
 	function render()
 	{
-		$logpath  = $this->api->log_filepath;
+		$logpath  = DevDebug::get_instance()->log_filepath;
 		$modified = filemtime( $logpath ) + get_option('gmt_offset');
 		$logtext  = esc_html( file_get_contents( $logpath ) );
 		?>
@@ -20,6 +22,6 @@ class DevDebug_DebugBar_Log extends Debug_Bar_Panel
 			Modified: <code><?php echo date(DATE_RSS, $modified); ?></code>
 		</div>
 		<pre id="dev_debug_log"><?php echo $logtext ?></pre>
-		<?php 
+		<?php
 	}
 }
