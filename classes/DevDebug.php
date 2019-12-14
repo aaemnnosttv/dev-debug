@@ -73,7 +73,6 @@ class DevDebug
 	public function register()
     {
 		add_action( 'shutdown', array($this, 'output_captured') );
-		add_action( 'current_screen', array($this, 'get_screen') );
 		add_filter( 'debug_bar_panels', array($this, 'init_debug_bar_panels') );
 
 		do_action( 'ddbug/ready', $this );
