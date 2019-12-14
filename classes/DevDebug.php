@@ -505,8 +505,17 @@ HTML;
 
 	public static function get_realm()
 	{
-		if ( self::const_value('DOING_AJAX') )
-			return 'ajax';
+        if (wp_doing_cron()) {
+            return 'cron';
+        }
+
+        if (wp_doing_ajax()) {
+            return 'ajax';
+        }
+
+        if (self::const_value('REST_REQUEST')) {
+            return 'rest';
+        }
 
 		return is_admin() ? 'admin' : 'front';
 	}
