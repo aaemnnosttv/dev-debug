@@ -74,20 +74,16 @@ class DevDebug
 		$log_dir = apply_filters( 'ddbug/logging/path', WP_CONTENT_DIR );
 		$this->log_filepath = path_join( $log_dir, '.htdev-debug.log' );
 		self::$logger = new DevDebug_Logger( $this->log_filepath, self::$log_level );
+	}
 
-		// init
-		add_action( 'init',	array($this, 'init') );
-		// output!
+	public function register()
+    {
 		add_action( 'shutdown', array($this, 'output_captured') );
+		add_action( 'current_screen', array($this, 'get_screen') );
+		add_filter( 'debug_bar_panels', array($this, 'init_debug_bar_panels') );
 
 		do_action( 'ddbug/ready', $this );
-	}
-
-	function init()
-	{
-		add_filter( 'debug_bar_panels'	, array($this, 'init_debug_bar_panels') );
-		add_action( 'current_screen',	array($this, 'get_screen') );
-	}
+    }
 
 	public function init_debug_bar_panels( $panels )
 	{

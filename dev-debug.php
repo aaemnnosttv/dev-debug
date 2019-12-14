@@ -12,7 +12,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 }
 
 #########################
-DevDebug::get_instance();
+DevDebug::get_instance()->register();
 #########################
 
 // API
