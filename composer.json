@@ -11,6 +11,9 @@
     		"role": "Developer"
     	}
     ],
+    "repositories": [
+        {"type": "composer", "url": "https://wpackagist.org"}
+    ],
     "autoload": {
         "classmap": ["classes"],
         "psr-4": {
@@ -19,5 +22,9 @@
     },
     "require": {
 	    "composer/installers": "^1.0"
+    },
+    "require-dev": {
+        "roots/wordpress": "^5",
+        "wpackagist-plugin/debug-bar": "^1"
     }
 }
