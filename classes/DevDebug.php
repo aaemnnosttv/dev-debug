@@ -23,7 +23,7 @@ class DevDebug
 	 * [$logger description]
 	 * @var [type]
 	 */
-	private static $logger;
+	private $logger;
 	/**
 	 * [$captured description]
 	 * @var array
@@ -67,7 +67,7 @@ class DevDebug
 		 */
 		$log_dir = apply_filters( 'ddbug/logging/path', WP_CONTENT_DIR );
 		$this->log_filepath = path_join( $log_dir, '.htdev-debug.log' );
-		self::$logger = new DevDebug_Logger( $this->log_filepath, self::$log_level );
+		$this->logger = new DevDebug_Logger( $this->log_filepath, self::$log_level );
 	}
 
 	public function register()
@@ -99,7 +99,7 @@ class DevDebug
 	public function analyze( $data, $args = array() )
 	{
 		// maybe record this
-		self::log( $data, __METHOD__, DevDebug_Logger::DEBUG );
+		$this->log( $data, __METHOD__, DevDebug_Logger::DEBUG );
 
 		$d = array(
 			'backtrace'  => array(),
@@ -210,7 +210,7 @@ class DevDebug
 					if ( false === stripos($header,'text/html') )
 					{
 						$suppress = true;
-						self::log('output suppressed: non-html content-type request', __METHOD__, DevDebug_Logger::DEBUG);
+						$this->log('output suppressed: non-html content-type request', __METHOD__, DevDebug_Logger::DEBUG);
 					}
 
 					break;
@@ -220,27 +220,27 @@ class DevDebug
 
 		if ( empty( $this->captured ) )
 		{
-			self::log('nothing captured', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('nothing captured', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( wp_doing_ajax() )
 		{
-			self::log('output suppressed: doing ajax', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('output suppressed: doing ajax', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( PHP_SAPI == 'cli' )
 		{
-			self::log('output suppressed: cli', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('output suppressed: cli', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( $this->is_screen_id('async-upload') )
 		{
-			self::log('output suppressed: media upload', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('output suppressed: media upload', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( apply_filters( 'ddbug/output/footer/suppress', false ) )
 		{
-			self::log('output suppressed: filter', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('output suppressed: filter', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
 
@@ -518,14 +518,18 @@ HTML;
 		return is_admin() ? 'admin' : 'front';
 	}
 
-	/**
-	 * Low-level debugging
-	 *
-	 * For testing our own doings
-	 *
-	 * @return [type] [description]
-	 */
-	public static function log( $msg, $title = null, $level = null )
+    /**
+     * Low-level debugging
+     *
+     * For testing our own doings
+     *
+     * @param      $msg
+     * @param null $title
+     * @param null $level
+     *
+     * @return void [type] [description]
+     */
+	public function log( $msg, $title = null, $level = null )
 	{
 		if ( is_null( $level ) )
 			$level = DevDebug::$log_level;
@@ -542,7 +546,7 @@ HTML;
 			$log .= str_repeat('-----', 10);
 		}
 
-		self::$logger->Log( $log, $level );
+		$this->logger->Log( $log, $level );
 	}
 
 }
