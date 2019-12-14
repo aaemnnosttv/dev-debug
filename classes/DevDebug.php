@@ -65,7 +65,6 @@ class DevDebug
 		//require_once "DevDebug_Logger.php";
 		$this->dir = dirname( dirname( __FILE__ ) );
 		$this->uri = plugins_url( '', "$this->dir/dev-debug.php" );
-		$this->doing_ajax = (bool) self::const_value('DOING_AJAX');
 
 		/**
 		 * Set the directory for to write debug log file to
@@ -242,7 +241,7 @@ class DevDebug
 			self::log('nothing captured', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
 		}
-		elseif ( $this->doing_ajax )
+		elseif ( wp_doing_ajax() )
 		{
 			self::log('output suppressed: doing ajax', __METHOD__, DevDebug_Logger::DEBUG);
 			$suppress = true;
