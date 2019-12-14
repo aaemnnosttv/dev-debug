@@ -163,14 +163,9 @@ class DevDebug
 		return $d;
 	}
 
-	public function capture_count()
-	{
-		return count( $this->captured );
-	}
-
 	public function has_captures()
 	{
-		return (bool) $this->capture_count();
+		return ! empty($this->captured);
 	}
 
 	/**
