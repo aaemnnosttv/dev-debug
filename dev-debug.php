@@ -1,11 +1,10 @@
 <?php
-
-/*
-	Plugin Name: Dev Debug
-	Description: Development Debug Functions
-	Author: Evan Mattson (@aaemnnosttv)
-	Version: 1.0
-*/
+/**
+ * Plugin Name: Dev Debug
+ * Description: Development Debug Functions
+ * Author: Evan Mattson (@aaemnnosttv)
+ * Version: 2.0
+ */
 
 use DevDebug\DevDebug;
 
