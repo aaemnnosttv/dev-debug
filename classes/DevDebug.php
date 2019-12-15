@@ -13,8 +13,6 @@ use DevDebug\Logger;
 class DevDebug
 {
 
-	const slug = 'dev-debug';
-
 	/**
 	 * [$logger description]
 	 * @var [type]
