@@ -9,11 +9,11 @@ class CapturesPanel extends Debug_Bar_Panel
 {
 	function prerender()
 	{
-		$this->set_visible(DevDebug::get_instance()->has_captures());
+		$this->set_visible(devdebug()->has_captures());
 	}
 
 	function render()
 	{
-		DevDebug::get_instance()->output_captured();
+		devdebug()->output_captured();
 	}
 }

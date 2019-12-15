@@ -16,11 +16,6 @@ class DevDebug
 	const slug = 'dev-debug';
 
 	/**
-	 * [$instance description]
-	 * @var [type]
-	 */
-	private static $instance;
-	/**
 	 * [$logger description]
 	 * @var [type]
 	 */
@@ -53,18 +48,7 @@ class DevDebug
 	 */
 	public static $log_level = Logger::INFO;
 
-
-
-
-	public static function get_instance()
-	{
-		if ( is_null( self::$instance ) )
-			self::$instance = new self();
-
-		return self::$instance;
-	}
-
-	private function __construct()
+	public function __construct()
 	{
 		/**
 		 * Set the directory for to write debug log file to

@@ -131,7 +131,7 @@ HTML;
                 $n = "<span class='null'>NULL</span>";
             } else {
                 $n = $a;
-                DevDebug::get_instance()->log('Missing type _' . gettype($a) . '_ handling!', __METHOD__);
+                devdebug()->log('Missing type _' . gettype($a) . '_ handling!', __METHOD__);
             }
 
             $new[$i] = "<span class=\"arg\">$n</span>";
