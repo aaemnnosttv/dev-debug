@@ -16,6 +16,7 @@
     ],
     "autoload": {
         "classmap": ["classes"],
+        "files": ["src/functions.php"],
         "psr-4": {
             "DevDebug\\": "src"
         }
