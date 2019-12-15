@@ -15,7 +15,9 @@
  *		$log->LogDebug("x = 5");					//Prints nothing due to priority setting
 */
 
-class DevDebug_Logger
+namespace DevDebug;
+
+class Logger
 {
 
 	const DEBUG 	= 1;	// Most Verbose
@@ -30,18 +32,18 @@ class DevDebug_Logger
 	const LOG_CLOSED 	= 3;
 
 	/* Public members: Not so much of an example of encapsulation, but that's okay. */
-	public $Log_Status 	= DevDebug_Logger::LOG_CLOSED;
+	public $Log_Status 	= self::LOG_CLOSED;
 	public $DateFormat	= "Y-m-d G:i:s";
 	public $MessageQueue;
 
 	private $log_file;
-	private $priority = DevDebug_Logger::INFO;
+	private $priority = self::INFO;
 
 	private $file_handle;
 
 	public function __construct( $filepath , $priority )
 	{
-		if ( $priority == DevDebug_Logger::OFF ) return;
+		if ( $priority == static::OFF ) return;
 
 		$this->log_file = $filepath;
 		$this->MessageQueue = array();
@@ -51,7 +53,7 @@ class DevDebug_Logger
 		{
 			if ( !is_writable($this->log_file) )
 			{
-				$this->Log_Status = DevDebug_Logger::OPEN_FAILED;
+				$this->Log_Status = static::OPEN_FAILED;
 				$this->MessageQueue[] = "The file exists, but could not be opened for writing. Check that appropriate permissions have been set.";
 				return;
 			}
@@ -59,12 +61,12 @@ class DevDebug_Logger
 
 		if ( $this->file_handle = fopen( $this->log_file , "a" ) )
 		{
-			$this->Log_Status = DevDebug_Logger::LOG_OPEN;
+			$this->Log_Status = static::LOG_OPEN;
 			$this->MessageQueue[] = "The log file was opened successfully.";
 		}
 		else
 		{
-			$this->Log_Status = DevDebug_Logger::OPEN_FAILED;
+			$this->Log_Status = static::OPEN_FAILED;
 			$this->MessageQueue[] = "The file could not be opened. Check permissions.";
 		}
 
@@ -79,27 +81,27 @@ class DevDebug_Logger
 
 	public function LogInfo($line)
 	{
-		$this->Log( $line , DevDebug_Logger::INFO );
+		$this->Log( $line , static::INFO );
 	}
 
 	public function LogDebug($line)
 	{
-		$this->Log( $line , DevDebug_Logger::DEBUG );
+		$this->Log( $line , static::DEBUG );
 	}
 
 	public function LogWarn($line)
 	{
-		$this->Log( $line , DevDebug_Logger::WARN );
+		$this->Log( $line , static::WARN );
 	}
 
 	public function LogError($line)
 	{
-		$this->Log( $line , DevDebug_Logger::ERROR );
+		$this->Log( $line , static::ERROR );
 	}
 
 	public function LogFatal($line)
 	{
-		$this->Log( $line , DevDebug_Logger::FATAL );
+		$this->Log( $line , static::FATAL );
 	}
 
 	public function Log($line, $priority)
@@ -113,7 +115,7 @@ class DevDebug_Logger
 
 	public function WriteFreeFormLine( $line )
 	{
-		if ( $this->Log_Status == DevDebug_Logger::LOG_OPEN && $this->priority != DevDebug_Logger::OFF )
+		if ( $this->Log_Status == static::LOG_OPEN && $this->priority != static::OFF )
 		{
 		    if (fwrite( $this->file_handle , $line ) === false) {
 		        $this->MessageQueue[] = "The file could not be written to. Check that appropriate permissions have been set.";
@@ -127,15 +129,15 @@ class DevDebug_Logger
 
 		switch( $level )
 		{
-			case DevDebug_Logger::INFO:
+			case static::INFO:
 				return "$time - INFO  -->";
-			case DevDebug_Logger::WARN:
+			case static::WARN:
 				return "$time - WARN  -->";
-			case DevDebug_Logger::DEBUG:
+			case static::DEBUG:
 				return "$time - DEBUG -->";
-			case DevDebug_Logger::ERROR:
+			case static::ERROR:
 				return "$time - ERROR -->";
-			case DevDebug_Logger::FATAL:
+			case static::FATAL:
 				return "$time - FATAL -->";
 			default:
 				return "$time - LOG   -->";

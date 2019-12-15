@@ -3,6 +3,7 @@
 use DevDebug\Capture;
 use DevDebug\DebugBar\CapturesPanel;
 use DevDebug\DebugBar\LogPanel;
+use DevDebug\Logger;
 
 /**
  * @package DevDebug
@@ -41,7 +42,7 @@ class DevDebug
 	private $did_styles;
 
 	/**
-	 * Sets the minimun level to log
+	 * Sets the minimum level to log
 	 *
 	 * const DEBUG	= 1;	// Most Verbose
 	 * const INFO	= 2;	// ...
@@ -50,7 +51,7 @@ class DevDebug
 	 * const FATAL	= 5;	// Least Verbose
 	 * const OFF	= 6;	// Nothing at all.
 	 */
-	public static $log_level = DevDebug_Logger::INFO;
+	public static $log_level = Logger::INFO;
 
 
 
@@ -71,7 +72,7 @@ class DevDebug
 		 */
 		$log_dir = apply_filters( 'ddbug/logging/path', WP_CONTENT_DIR );
 		$this->log_filepath = path_join( $log_dir, '.htdev-debug.log' );
-		$this->logger = new DevDebug_Logger( $this->log_filepath, self::$log_level );
+		$this->logger = new Logger( $this->log_filepath, self::$log_level );
 	}
 
 	public function register()
@@ -103,7 +104,7 @@ class DevDebug
 	public function analyze( $data, $args = array() )
 	{
 		// maybe record this
-		$this->log( $data, __METHOD__, DevDebug_Logger::DEBUG );
+		$this->log( $data, __METHOD__, Logger::DEBUG );
 
 		$d = array(
 			'backtrace'  => array(),
@@ -175,7 +176,7 @@ class DevDebug
 					if ( false === stripos($header,'text/html') )
 					{
 						$suppress = true;
-						$this->log('output suppressed: non-html content-type request', __METHOD__, DevDebug_Logger::DEBUG);
+						$this->log('output suppressed: non-html content-type request', __METHOD__, Logger::DEBUG);
 					}
 
 					break;
@@ -185,27 +186,27 @@ class DevDebug
 
 		if ( empty( $this->captured ) )
 		{
-			$this->log('nothing captured', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('nothing captured', __METHOD__, Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( wp_doing_ajax() )
 		{
-			$this->log('output suppressed: doing ajax', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('output suppressed: doing ajax', __METHOD__, Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( PHP_SAPI == 'cli' )
 		{
-			$this->log('output suppressed: cli', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('output suppressed: cli', __METHOD__, Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( $this->is_screen_id('async-upload') )
 		{
-			$this->log('output suppressed: media upload', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('output suppressed: media upload', __METHOD__, Logger::DEBUG);
 			$suppress = true;
 		}
 		elseif ( apply_filters( 'ddbug/output/footer/suppress', false ) )
 		{
-			$this->log('output suppressed: filter', __METHOD__, DevDebug_Logger::DEBUG);
+			$this->log('output suppressed: filter', __METHOD__, Logger::DEBUG);
 			$suppress = true;
 		}
 
