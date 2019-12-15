@@ -1,9 +1,9 @@
 <?php
 
-use DevDebug\Capture;
+namespace DevDebug;
+
 use DevDebug\DebugBar\CapturesPanel;
 use DevDebug\DebugBar\LogPanel;
-use DevDebug\Logger;
 
 /**
  * @package DevDebug
@@ -250,7 +250,7 @@ class DevDebug
 	public function log( $msg, $title = null, $level = null )
 	{
 		if ( is_null( $level ) )
-			$level = DevDebug::$log_level;
+			$level = static::$log_level;
 
 		$log = sprintf( '(%s)', self::get_realm() );
 		$log .= is_scalar( $title ) ? "[$title]" : '';

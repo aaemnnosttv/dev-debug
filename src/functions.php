@@ -1,5 +1,6 @@
 <?php
 
+use DevDebug\DevDebug;
 use DevDebug\Logger;
 
 /**

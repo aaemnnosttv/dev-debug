@@ -7,6 +7,8 @@
 	Version: 1.0
 */
 
+use DevDebug\DevDebug;
+
 define('DEVDEBUG_FILE', __FILE__);
 define('DEVDEBUG_DIR', __DIR__);
 
