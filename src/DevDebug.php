@@ -197,6 +197,10 @@ class DevDebug
 
 	protected function is_screen_id($id)
 	{
+	    if ( ! is_admin() ) {
+	        return;
+        }
+	    
 		$screen = get_current_screen();
 
 		if ( ! $screen ) {

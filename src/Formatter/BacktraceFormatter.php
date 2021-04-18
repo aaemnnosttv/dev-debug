@@ -60,83 +60,95 @@ HTML;
 
     protected function prepare_backtrace()
     {
-        $f = [];
-
-        foreach ($this->trace as $i => $data) {
-            if (isset($data['file']) && preg_match('/wp-settings\.php$/', $data['file'])) {
-                break;
-            } // don't include this stuff that will be on every function..
-
-            // arguments
-            if (! empty($data['args'])) {
-                $f[$i]['args'] = $this->format_args($data['args'], true);
-            }
-
-            // file & line
-            foreach (['file', 'line'] as $key) {
-                if (isset($data[$key])) {
-                    $f[$i][$key] = $data[$key];
+        return array_map(
+            function ($frame) {
+                // arguments
+                if (! empty($frame['args'])) {
+                    $frame['args'] = $this->format_args($frame['args'], true);
                 }
-            }
 
-            // function
-            if (isset($data['class'])) {
-                $f[$i]['func'] = "<span class='class'>{$data['class']}</span>";
-                $f[$i]['func'] .= "<span class='call-type'>{$data['type']}</span>";
-                $f[$i]['func'] .= "<span class='method'>{$data['function']}</span>";
-            } else {
-                $f[$i]['func'] = "<span class='function'>{$data['function']}</span>";
-            }
-        }
+                // file & line
+//                foreach (['file', 'line'] as $key) {
+//                    if (isset($frame[$key])) {
+//                        $f[$i][$key] = $frame[$key];
+//                    }
+//                }
 
-        return $f;
+                // function
+                if (isset($frame['class'])) {
+                    $frame['func'] = "<span class='class'>{$frame['class']}</span>"
+                        . "<span class='call-type'>{$frame['type']}</span>"
+                        . "<span class='method'>{$frame['function']}</span>";
+                } else {
+                    $frame['func'] = "<span class='function'>{$frame['function']}</span>";
+                }
+
+                return $frame;
+            },
+            $this->trace
+        );
     }
 
 
     function format_args($args, $recurse = false)
     {
-        $new = [];
-        foreach ($args as $i => $a) {
-            if (is_string($a)) {
-                $n = sprintf("'%s'", esc_html($a));
-            } elseif (is_array($a)) {
-                if (empty($a)) {
-                    $n = 'array()';
-                } // class/object callback
-                elseif (
-                    2 === count($a)
-                    && (isset($a[0]) && isset($a[1]))
-                    && (is_object($a[0]) || (is_string($a[0]) && class_exists($a[0])))
-                    && (is_string($a[1]) && method_exists($a[0], $a[1]))
-                ) {
-                    $ob = is_object($a[0])
-                        ? sprintf('<span class="instance class">%s</span>', get_class($a[0]))
-                        : sprintf('<span class="class-name">%s</span>', "'{$a[0]}'");
-
-                    $n = sprintf('array( %s, \'%s\' )', $ob, $a[1]);
-                } else {
-                    if ($recurse && count($a) < 10) {
-                        $n = 'array(' . join(',', $this->format_args($a)) . ')';
-                    } else {
-                        $n = 'array(::' . count($a) . '::)';
-                    }
-                }
-            } elseif (is_object($a)) {
-                $n = sprintf('<span class="instance class">%s</span>', get_class($a));
-            } elseif (is_bool($a)) {
-                $n = sprintf('<span class="boolean %1$s">%1$s</span>', $a ? 'true' : 'false');
-            } elseif (is_numeric($a)) {
-                $n = $a;
-            } elseif (is_null($a)) {
-                $n = "<span class='null'>NULL</span>";
-            } else {
-                $n = $a;
-                devdebug()->log('Missing type _' . gettype($a) . '_ handling!', __METHOD__);
-            }
-
-            $new[$i] = "<span class=\"arg\">$n</span>";
+        if (! is_array($args)) {
+            return $this->format_arg($args, $recurse);
         }
 
-        return array_filter($new);
+        return array_map(
+            function ($arg) use ($recurse) {
+                return $this->format_arg($arg, $recurse);
+            },
+            $args
+        );
+    }
+
+    protected function format_arg($arg, $recurse)
+    {
+        if (is_string($arg)) {
+            $n = sprintf("'%s'", esc_html($arg));
+        } elseif (is_array($arg)) {
+            if (empty($arg)) {
+                $n = 'array()';
+            } elseif ($recurse && count($arg) < 10) {
+                $n = 'array(' . join(',', $this->format_args($arg, $recurse)) . ')';
+            } else {
+                $n = 'array(::' . count($arg) . '::)';
+            }
+        } elseif (is_object($arg)) {
+            $n = get_class($arg);
+        } elseif (is_bool($arg)) {
+            $n = $arg ? 'true' : 'false';
+        } elseif (is_null($arg)) {
+            $n = 'NULL';
+        } else {
+            $n = $arg;
+        }
+
+        return sprintf(
+            '<span class="arg %s">%s</span>',
+            join(' ', $this->get_classes_for_value($arg)),
+            $n
+        );
+    }
+
+    protected function get_classes_for_value($input)
+    {
+        $classes = array( 'type-' . strtolower(gettype($input)) );
+
+        if (empty($input)) {
+            $classes[] = 'empty';
+        }
+
+        if (is_object($input)) {
+            $classes[] = 'instance';
+        }
+
+        if (is_string($input) && class_exists($input)) {
+            $classes[] = 'class-name';
+        }
+
+        return $classes;
     }
 }
