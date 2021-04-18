@@ -15,7 +15,7 @@
         {"type": "composer", "url": "https://wpackagist.org"}
     ],
     "autoload": {
-        "classmap": ["classes"],
+        "classmap": ["src"],
         "files": ["src/functions.php"],
         "psr-4": {
             "DevDebug\\": "src"
